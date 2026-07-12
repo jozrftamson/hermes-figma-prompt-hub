@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
   pull-requests: write
 
 jobs:
@@ -32,7 +33,40 @@ jobs:
       - name: Generate code review report
         id: review
         continue-on-error: true
-        run: python scripts/code_review.py --base origin/${{ github.base_ref }} --output docs/code-review-report.md
+        run: python scripts/code_review.py --base origin/${{ github.base_ref }} --output docs/code-review-report.md --json-output docs/code-review-findings.json
+
+      - name: Apply reviewer routing labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const report = JSON.parse(fs.readFileSync("docs/code-review-findings.json", "utf8"));
+            for (const label of report.labels || []) {
+              try {
+                await github.rest.issues.getLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label
+                });
+              } catch (error) {
+                if (error.status !== 404) throw error;
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label,
+                  color: "1d76db",
+                  description: "Automatically assigned review routing label"
+                });
+              }
+            }
+            if ((report.labels || []).length) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                labels: report.labels
+              });
+            }
 
       - name: Post review comment
         uses: actions/github-script@v7
@@ -46,6 +80,82 @@ jobs:
               issue_number: context.payload.pull_request.number,
               body
             });
+
+      - name: Post inline review comments
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const report = JSON.parse(fs.readFileSync("docs/code-review-findings.json", "utf8"));
+            const comments = (report.findings || [])
+              .filter(finding => finding.line && finding.path)
+              .slice(0, 20)
+              .map(finding => ({
+                path: finding.path,
+                line: finding.line,
+                side: "RIGHT",
+                body: `**${finding.severity.toUpperCase()}** \`${finding.code}\`: ${finding.message}`
+              }));
+            if (!comments.length) {
+              return;
+            }
+            await github.rest.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              event: "COMMENT",
+              body: "Automated inline review comments.",
+              comments
+            });
+
+      - name: Create repeated finding follow-up issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const report = JSON.parse(fs.readFileSync("docs/code-review-findings.json", "utf8"));
+            try {
+              await github.rest.issues.getLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: "automation-improvement"
+              });
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: "automation-improvement",
+                color: "1d76db",
+                description: "Follow-up work to improve automation"
+              });
+            }
+            const counts = {};
+            for (const finding of report.findings || []) {
+              counts[finding.code] = (counts[finding.code] || 0) + 1;
+            }
+            for (const [code, count] of Object.entries(counts)) {
+              if (count < 2) continue;
+              const title = `automation improvement: reduce repeated ${code} findings`;
+              const search = await github.rest.search.issuesAndPullRequests({
+                q: `repo:${context.repo.owner}/${context.repo.repo} is:issue in:title "${title}"`
+              });
+              if (search.data.total_count > 0) continue;
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                labels: ["automation-improvement"],
+                body: [
+                  `The automated code review found \`${code}\` ${count} times in PR #${context.payload.pull_request.number}.`,
+                  "",
+                  "Suggested follow-up:",
+                  "- Improve docs or templates to prevent this pattern.",
+                  "- Add a more specific local validation command.",
+                  "- Add autofix guidance to the review output."
+                ].join("\n")
+              });
+            }
 
       - name: Fail on blocking review findings
         if: steps.review.outcome == 'failure'

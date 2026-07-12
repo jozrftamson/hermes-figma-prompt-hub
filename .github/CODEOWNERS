@@ -1,0 +1,9 @@
+# Maintainer routing map. Replace placeholders with real GitHub users or teams as maintainers join.
+
+prompts/** @jozrftamson
+evals/** @jozrftamson
+mcp/** @jozrftamson
+scripts/** @jozrftamson
+.github/** @jozrftamson
+docs/** @jozrftamson
+

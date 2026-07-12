@@ -1,0 +1,12 @@
+{
+  "changed_files": [],
+  "findings": [],
+  "labels": [],
+  "score": 90,
+  "score_notes": [
+    "No docs update detected.",
+    "No tests or eval fixtures changed.",
+    "No automated review findings."
+  ],
+  "has_errors": false
+}

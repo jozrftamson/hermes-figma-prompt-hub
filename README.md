@@ -253,6 +253,7 @@ This repository includes automation for ongoing development and collaborator onb
 - `Contributor scout`: creates a monthly manual-review shortlist of potential collaborators.
 - `Automation health`: scans failed GitHub Actions runs, creates diagnostic issues, and suggests follow-up automation.
 - `Automated code review`: reviews PR diffs for repository-specific risks and posts a PR comment.
+- `CODEOWNERS`: routes prompt, MCP, docs, scripts, and automation changes to maintainers.
 
 Local commands:
 
