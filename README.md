@@ -1,98 +1,115 @@
 # Hermes Figma Prompt Hub
 
-Standalone Figma/Hermes prompt hub scaffold for designing, versioning, and validating structured prompt assets outside the Hermes core tree.
-
 Figma-to-MCP prompt management for Hermes workflows.
 
-This project was split out from a Hermes core-tree integration proposal. It is intended to be used as an external project or plugin-style companion repository.
+Hermes Figma Prompt Hub is an open-source scaffold for designing, versioning, validating, and eventually serving structured prompt assets from Figma into Hermes-compatible MCP workflows.
 
-License: MIT.
+The project keeps Figma-specific integration work outside the Hermes core repository while giving teams a clear place to build prompt tooling, validation, importer logic, examples, and automation.
 
-## Contributors wanted
+## Status
 
-This repository is looking for contributors who want to help turn the scaffold into a useful Figma/Hermes MCP integration.
+This repository is currently an integration scaffold.
 
-Good first areas:
+- Ready: prompt schema, example prompt, validation scripts, Figma layer contract, CI, contributor automation, sponsorship docs.
+- In progress: Figma frame importer and MCP server implementation.
+- Not ready yet: production Figma sync, full MCP tool server, package release.
 
-- Build a Figma API importer that converts `PROMPT/<id>` frames into prompt JSON.
-- Implement `mcp/server.py` with tools for listing, validating, and exporting prompts.
-- Add prompt examples and eval cases under `prompts/raw` and `evals/cases`.
-- Improve docs for Hermes MCP setup and Figma token handling.
-- Add tests for schema validation and future importer behavior.
+## What It Provides
 
-Start here:
+- A structured JSON prompt format for system, developer, user template, variables, guardrails, tools, output format, examples, changelog, and eval checks.
+- A Figma layer naming contract for frames named `PROMPT/<id>`.
+- Validation scripts for prompts, schema consistency, prompt catalog generation, and Figma contract alignment.
+- GitHub automation for CI, code review, contributor onboarding, issue health, prompt catalog updates, and collaboration scouting.
+- Documentation and issue templates for contributors, sponsors, and maintainers.
 
-- Read [CONTRIBUTING.md](CONTRIBUTING.md).
-- Pick an item from [ROADMAP.md](ROADMAP.md).
-- Open or claim an issue with the `good first issue` or `help wanted` label.
+## Use Cases
 
-## Sponsor development
+- Design prompts visually in Figma and map layers into structured prompt JSON.
+- Maintain prompt versions with guardrails, examples, output contracts, and eval checks.
+- Prepare prompt assets for Hermes or MCP-compatible tools.
+- Build a shared prompt hub for design, product, and engineering workflows.
+- Invite collaborators around Figma API, MCP, prompt evaluation, docs, and automation.
 
-If this project is useful to you, you can sponsor ongoing development through GitHub Sponsors:
-
-https://opencollective.com/hermes-figma-prompt-hub
-
-https://github.com/sponsors/jozrftamson
-
-OpenCollective is the recommended option for transparent project funding. GitHub Sponsors, Buy Me a Coffee, and Ko-fi are also documented in [SPONSORING.md](SPONSORING.md).
-
-Sponsorship helps fund Figma API importer work, MCP server development, prompt validation, documentation, and contributor support.
-
-## Installation
+## Quickstart
 
 ```bash
 git clone https://github.com/jozrftamson/hermes-figma-prompt-hub.git
 cd hermes-figma-prompt-hub
 python3 -m venv .venv
 . .venv/bin/activate
-pip install jsonschema
-```
-
-Or install pinned project dependencies:
-
-```bash
 pip install -r requirements.txt
+python scripts/validate_repo.py
 ```
 
-Validate the included example prompt:
+Validate one prompt:
 
 ```bash
 python scripts/validate_prompt.py prompts/raw/nous-central-v1.json
 ```
 
-Validate the full repository:
+Regenerate the prompt catalog:
 
 ```bash
-python scripts/validate_repo.py
+python scripts/generate_prompt_catalog.py
 ```
 
-Create or refresh the scaffold files in the current project:
-
-```bash
-python install/scaffold.py
-```
-
-To scaffold into another directory:
+Create a scaffold in another directory:
 
 ```bash
 python install/scaffold.py /path/to/figma-hermes-prompt-hub
 ```
 
-## Figma token and API configuration
+## Prompt Format
 
-Create a Figma personal access token in Figma and keep it outside source control:
+Prompt files live under `prompts/raw/*.json` and must match `prompts/schema/prompt.schema.json`.
 
-```bash
-export FIGMA_ACCESS_TOKEN="figd_..."
-export FIGMA_FILE_KEY="your-file-key"
+Core fields:
+
+- `id`, `version`, `status`, `category`, `tags`
+- `system`, `developer`, `user_template`
+- `variables`, `context_sources`, `tools`
+- `guardrails`, `constraints`, `style_rules`
+- `output_format`
+- `few_shots`
+- `changelog`
+- `eval.must_include`, `eval.must_not_include`, `eval.checks`
+
+Example:
+
+```json
+{
+  "id": "nous-central-v1",
+  "version": "0.2.0",
+  "status": "active",
+  "category": "general-assistant",
+  "variables": ["context", "task", "format"],
+  "output_format": {
+    "type": "json",
+    "instructions": "Return valid JSON with summary, reasoning_notes and next_actions."
+  },
+  "guardrails": ["Keine erfundenen Fakten", "Bei Unsicherheit klar markieren"],
+  "eval": {
+    "must_include": ["summary", "next_actions"],
+    "must_not_include": ["Great question", "As an AI"],
+    "checks": [
+      {
+        "name": "valid_json_output",
+        "type": "json_schema"
+      }
+    ]
+  }
+}
 ```
 
-The current scaffold defines the prompt contract and validation format. A Figma sync command can read frames named `PROMPT/<id>` and map layers using `prompts/figma-layer-contract.txt`.
+See the full example at `prompts/raw/nous-central-v1.json`.
 
-Expected Figma frame/layer contract:
+## Figma Contract
+
+Create Figma frames named `PROMPT/<id>`. Text layers should use the naming contract in `prompts/figma-layer-contract.txt`.
+
+Current layer names:
 
 ```text
-Figma Layer Contract (Frame: PROMPT/<id>)
 00_system
 01_developer
 02_user_template
@@ -114,20 +131,27 @@ Figma Layer Contract (Frame: PROMPT/<id>)
 92_eval_check_<n>
 ```
 
-## Hermes MCP configuration
+Fixture data for importer development lives under `evals/cases`.
 
-Use Hermes' external MCP configuration path instead of adding vendor-specific code to the Hermes repository.
+## MCP Direction
 
-Example MCP server entry:
+The planned MCP server should expose tools for:
+
+- listing available prompt IDs
+- validating prompt files
+- exporting prompt content as structured JSON
+- later syncing or importing Figma frames
+
+Hermes should consume this as an external MCP integration instead of adding Figma-specific code to the Hermes core tree.
+
+Example configuration shape:
 
 ```json
 {
   "mcp_servers": {
     "figma-prompt-hub": {
       "command": "python",
-      "args": [
-        "/absolute/path/to/hermes-figma-prompt-hub/mcp/server.py"
-      ],
+      "args": ["/absolute/path/to/hermes-figma-prompt-hub/mcp/server.py"],
       "env": {
         "FIGMA_ACCESS_TOKEN": "${FIGMA_ACCESS_TOKEN}",
         "FIGMA_FILE_KEY": "${FIGMA_FILE_KEY}"
@@ -137,134 +161,71 @@ Example MCP server entry:
 }
 ```
 
-`mcp/server.py` is intentionally left as an integration point. Keep Figma API access and Hermes-specific MCP wiring in this external repository.
+## Automation
 
-## Example prompt workflow
+The repository includes automation for development quality and community growth:
 
-1. Design a Figma frame named `PROMPT/nous-central-v1`.
-2. Add text layers matching `prompts/figma-layer-contract.txt`.
-3. Export or sync the frame into `prompts/raw/nous-central-v1.json`.
-4. Validate the prompt:
+- CI validation
+- automated code review with severity policy, labels, inline comments, and PR score
+- Figma contract check
+- prompt catalog generation
+- automation failure diagnostics
+- good-first-issue seeding
+- stale issue pings without automatic closing
+- contributor recognition
+- contributor scout reports
+- monthly sponsor and contributor updates
+- CODEOWNERS routing
 
-```bash
-python scripts/validate_prompt.py prompts/raw/nous-central-v1.json
-```
-
-5. Use the validated prompt JSON from Hermes or an MCP tool.
-
-## Prompt format
-
-Prompt JSON files must match `prompts/schema/prompt.schema.json`:
-
-```json
-{
-  "id": "nous-central-v1",
-  "version": "0.2.0",
-  "status": "active",
-  "category": "general-assistant",
-  "tags": ["hermes", "figma", "prompt-hub"],
-  "model": "gpt-4.1",
-  "temperature": 0.2,
-  "system": "Du bist ein präziser Assistent.",
-  "developer": "Antwort kurz, korrekt, ohne Floskeln. Markiere Unsicherheit klar und verwende nur den gegebenen Kontext.",
-  "user_template": "Kontext: {{context}}\nAufgabe: {{task}}\nGewünschtes Format: {{format}}",
-  "output_format": {
-    "type": "json",
-    "instructions": "Return valid JSON with summary, reasoning_notes and next_actions."
-  },
-  "variables": ["context", "task", "format"],
-  "context_sources": [
-    {
-      "name": "figma_frame",
-      "type": "figma",
-      "required": false,
-      "description": "Optional Figma frame or layer context for design-aware prompts."
-    }
-  ],
-  "tools": [
-    {
-      "name": "mcp",
-      "allowed": true,
-      "policy": "Use MCP tools for prompt listing, validation and export."
-    }
-  ],
-  "guardrails": ["Keine erfundenen Fakten", "Bei Unsicherheit klar markieren"],
-  "constraints": ["Use only supplied context.", "Keep output concise."],
-  "style_rules": ["Use direct language.", "Prefer actionable next steps."],
-  "few_shots": [
-    {
-      "input": "task=Summarize X",
-      "output": "{\"summary\":\"Kurzfassung ...\",\"next_actions\":[\"Review copy\"]}",
-      "notes": "Shows compact JSON output."
-    }
-  ],
-  "changelog": [
-    {
-      "version": "0.2.0",
-      "changes": ["Added output format, tools, constraints and eval checks"]
-    }
-  ],
-  "eval": {
-    "must_include": ["summary", "next_actions"],
-    "must_not_include": ["Great question", "As an AI"],
-    "checks": [
-      {
-        "name": "valid_json_output",
-        "type": "json_schema",
-        "value": {
-          "type": "object",
-          "required": ["summary", "next_actions"]
-        }
-      }
-    ]
-  }
-}
-```
-
-Supported prompt extensions:
-
-- `status`: draft, active or deprecated lifecycle state.
-- `category` and `tags`: prompt grouping for search and catalog views.
-- `model` and `temperature`: recommended runtime defaults.
-- `output_format`: expected text, markdown or JSON response contract.
-- `context_sources`: named inputs such as Figma frames, user notes or documents.
-- `tools`: allowed tool names and usage policies.
-- `constraints`: hard behavioral limits.
-- `style_rules`: tone and formatting preferences.
-- `few_shots[].notes`: explanation for examples.
-- `changelog`: prompt version history.
-- `eval.checks`: structured checks such as contains, not_contains, regex, json_schema and max_length.
-
-## Development automation
-
-This repository includes automation for ongoing development and collaborator onboarding:
-
-- `CI`: validates prompt JSON, compiles Python files, and tests scaffold output on pushes and PRs.
-- `Issue welcome`: comments on new issues with contributor links and next steps.
-- `PR welcome`: comments on new PRs with the review checklist.
-- `Collaboration digest`: manually creates a GitHub issue summarizing current contributor opportunities.
-- `Prompt catalog`: generates `docs/prompt-catalog.md` from `prompts/raw/*.json`.
-- `Figma contract check`: keeps the layer contract, README, and fixtures synchronized.
-- `Good first issue seeding`: creates small contributor-friendly issues monthly.
-- `Stale issue ping`: reminds inactive issues after 30 days without closing them.
-- `Contributor recognition`: records merged PR contributors in `CONTRIBUTORS.md`.
-- `Schema release suggestion`: opens a release-planning issue after schema changes.
-- `Sponsor and contributor monthly update`: creates a monthly update issue for sponsors and collaborators.
-- `Contributor scout`: creates a monthly manual-review shortlist of potential collaborators.
-- `Automation health`: scans failed GitHub Actions runs, creates diagnostic issues, and suggests follow-up automation.
-- `Automated code review`: reviews PR diffs for repository-specific risks and posts a PR comment.
-- `CODEOWNERS`: routes prompt, MCP, docs, scripts, and automation changes to maintainers.
-
-Local commands:
+Useful local commands:
 
 ```bash
 python scripts/validate_repo.py
-python scripts/generate_collaboration_digest.py
-python scripts/generate_prompt_catalog.py
 python scripts/check_figma_contract.py
-python scripts/scout_collaborators.py
-python scripts/diagnose_automation_failures.py --limit 30
+python scripts/generate_prompt_catalog.py
 python scripts/code_review.py --base origin/main
+python scripts/diagnose_automation_failures.py --limit 30
+python scripts/scout_collaborators.py
 ```
 
-See [COLLABORATION.md](COLLABORATION.md), [HUMAN_COLLABORATORS.md](HUMAN_COLLABORATORS.md), [docs/prompt-catalog.md](docs/prompt-catalog.md), and [docs/outreach/templates.md](docs/outreach/templates.md) for outreach templates, collaborator roles, and maintainer routines.
+## Roadmap
+
+Near-term work:
+
+1. Implement the Figma importer for `PROMPT/<id>` frames.
+2. Implement the first MCP server tools.
+3. Add more prompt examples and eval fixtures.
+4. Improve prompt semantic review.
+5. Prepare a stable schema release.
+
+See [ROADMAP.md](ROADMAP.md).
+
+## Contributing
+
+Good first areas:
+
+- Figma API importer
+- MCP server tools
+- prompt examples
+- eval fixtures
+- validation and review automation
+- documentation
+
+Start with [CONTRIBUTING.md](CONTRIBUTING.md), [COLLABORATION.md](COLLABORATION.md), and open issues labeled `good first issue` or `help wanted`.
+
+## Sponsoring
+
+OpenCollective is the recommended funding path for transparent project support:
+
+https://opencollective.com/hermes-figma-prompt-hub
+
+GitHub Sponsors:
+
+https://github.com/sponsors/jozrftamson
+
+See [SPONSORING.md](SPONSORING.md).
+
+## License
+
+MIT. See [LICENSE](LICENSE).
+
