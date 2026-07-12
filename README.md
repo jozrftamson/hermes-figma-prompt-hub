@@ -26,9 +26,13 @@ Start here:
 
 If this project is useful to you, you can sponsor ongoing development through GitHub Sponsors:
 
+https://opencollective.com/hermes-figma-prompt-hub
+
 https://github.com/sponsors/jozrftamson
 
-Sponsorship helps fund Figma API importer work, MCP server development, prompt validation, documentation, and contributor support. See [SPONSORING.md](SPONSORING.md) for details.
+OpenCollective is the recommended option for transparent project funding. GitHub Sponsors, Buy Me a Coffee, and Ko-fi are also documented in [SPONSORING.md](SPONSORING.md).
+
+Sponsorship helps fund Figma API importer work, MCP server development, prompt validation, documentation, and contributor support.
 
 ## Installation
 
