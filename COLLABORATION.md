@@ -24,8 +24,19 @@ This project welcomes contributors for Python, Figma API work, MCP integration, 
 - Weekly: review issues and PRs.
 - Weekly: keep at least one `good first issue` open.
 - Monthly: run the `Collaboration digest` workflow and share the created issue.
+- Monthly: review automatically created good-first issues and monthly sponsor updates.
 - Monthly: publish a short sponsor/contributor update.
 - Each release: update `ROADMAP.md` and prompt examples.
+
+## Automation in use
+
+- `Good first issue seeding`: creates recurring small tasks for new contributors.
+- `Stale issue ping`: adds a friendly non-closing ping to inactive issues.
+- `Contributor recognition`: updates `CONTRIBUTORS.md` after merged PRs.
+- `Schema release suggestion`: opens a release issue when prompt schema files change.
+- `Sponsor and contributor monthly update`: creates a monthly update issue.
+- `Prompt catalog`: regenerates `docs/prompt-catalog.md`.
+- `Figma contract check`: verifies README, contract, and fixtures stay aligned.
 
 ## Outreach channels
 

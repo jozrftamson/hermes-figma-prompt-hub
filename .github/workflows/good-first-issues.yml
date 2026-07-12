@@ -1,0 +1,77 @@
+name: Good first issue seeding
+
+on:
+  schedule:
+    - cron: "0 9 1 * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create contributor-friendly issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const candidates = [
+              {
+                title: "good first issue: add another prompt example",
+                body: [
+                  "Add one useful prompt JSON file under `prompts/raw`.",
+                  "",
+                  "Done when:",
+                  "- The prompt validates with `python scripts/validate_repo.py`.",
+                  "- `docs/prompt-catalog.md` is regenerated.",
+                  "- The example has a clear category, variables, and eval checks."
+                ].join("\n"),
+                labels: ["good first issue", "help wanted"]
+              },
+              {
+                title: "good first issue: add Figma importer fixture",
+                body: [
+                  "Add one Figma-style fixture under `evals/cases` for a realistic `PROMPT/<id>` frame.",
+                  "",
+                  "Done when:",
+                  "- The fixture uses layer names from `prompts/figma-layer-contract.txt`.",
+                  "- `python scripts/validate_repo.py` passes.",
+                  "- No private Figma file data or tokens are included."
+                ].join("\n"),
+                labels: ["good first issue", "help wanted"]
+              },
+              {
+                title: "good first issue: improve setup documentation",
+                body: [
+                  "Improve one setup path in README or CONTRIBUTING.",
+                  "",
+                  "Good targets:",
+                  "- Fresh clone setup.",
+                  "- Prompt validation workflow.",
+                  "- Figma contract explanation.",
+                  "- MCP configuration notes.",
+                  "",
+                  "Done when the docs are clearer and validation still passes."
+                ].join("\n"),
+                labels: ["good first issue", "documentation", "help wanted"]
+              }
+            ];
+
+            for (const candidate of candidates) {
+              const existing = await github.rest.search.issuesAndPullRequests({
+                q: `repo:${context.repo.owner}/${context.repo.repo} is:issue in:title "${candidate.title}"`
+              });
+              if (existing.data.total_count > 0) {
+                core.info(`Skipping existing issue: ${candidate.title}`);
+                continue;
+              }
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: candidate.title,
+                body: candidate.body,
+                labels: candidate.labels
+              });
+            }
+

@@ -25,10 +25,9 @@ jobs:
         run: python scripts/validate_repo.py
 
       - name: Compile Python files
-        run: python -m py_compile install/scaffold.py scripts/validate_prompt.py scripts/validate_repo.py
+        run: python -m py_compile install/scaffold.py scripts/*.py
 
       - name: Test scaffold output
         run: |
           python install/scaffold.py /tmp/hermes-figma-prompt-hub-check
           python /tmp/hermes-figma-prompt-hub-check/scripts/validate_prompt.py /tmp/hermes-figma-prompt-hub-check/prompts/raw/nous-central-v1.json
-

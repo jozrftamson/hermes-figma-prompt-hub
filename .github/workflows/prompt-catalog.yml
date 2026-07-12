@@ -1,0 +1,41 @@
+name: Prompt catalog
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "prompts/raw/*.json"
+      - "scripts/generate_prompt_catalog.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate prompt catalog
+        run: python scripts/generate_prompt_catalog.py
+
+      - name: Commit catalog update
+        run: |
+          if git diff --quiet docs/prompt-catalog.md; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/prompt-catalog.md
+          git commit -m "Update prompt catalog"
+          git push
+

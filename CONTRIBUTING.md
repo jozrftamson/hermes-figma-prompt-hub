@@ -39,6 +39,14 @@ GitHub Actions run validation on pushes and pull requests. New issues and pull r
 
 Maintainers can run the manual `Collaboration digest` workflow from the GitHub Actions tab to create a fresh issue that advertises current contributor opportunities.
 
+Useful local automation:
+
+```bash
+python scripts/generate_prompt_catalog.py
+python scripts/check_figma_contract.py
+python scripts/generate_collaboration_digest.py
+```
+
 ## Good first issues
 
 Good first issues should be small, testable, and documented. Examples:

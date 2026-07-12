@@ -1,0 +1,69 @@
+name: Schema release suggestion
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "prompts/schema/prompt.schema.json"
+      - "prompts/raw/*.json"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  suggest-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Create schema release issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            async function ensureLabel(name, color, description) {
+              try {
+                await github.rest.issues.getLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name
+                });
+              } catch (error) {
+                if (error.status !== 404) throw error;
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name,
+                  color,
+                  description
+                });
+              }
+            }
+            await ensureLabel("release", "5319e7", "Release planning and versioning");
+
+            const date = new Date().toISOString().slice(0, 10);
+            const title = `Release suggestion: prompt schema update ${date}`;
+            const existing = await github.rest.search.issuesAndPullRequests({
+              q: `repo:${context.repo.owner}/${context.repo.repo} is:issue in:title "${title}"`
+            });
+            if (existing.data.total_count > 0) {
+              core.info("Release suggestion already exists.");
+              return;
+            }
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              labels: ["release", "documentation"],
+              body: [
+                "Prompt schema or prompt format files changed on `main`.",
+                "",
+                "Suggested maintainer steps:",
+                "- Review `prompts/schema/prompt.schema.json` changes.",
+                "- Confirm examples validate with `python scripts/validate_repo.py`.",
+                "- Update release notes or tag a schema version if the change is externally relevant.",
+                "- Regenerate `docs/prompt-catalog.md` if prompt examples changed."
+              ].join("\n")
+            });

@@ -1,0 +1,69 @@
+name: Contributor recognition
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  recognize:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
+
+      - name: Update CONTRIBUTORS.md
+        env:
+          CONTRIBUTOR: ${{ github.event.pull_request.user.login }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          path = Path("CONTRIBUTORS.md")
+          text = path.read_text()
+          login = os.environ["CONTRIBUTOR"]
+          pr_number = os.environ["PR_NUMBER"]
+          pr_title = os.environ["PR_TITLE"]
+          pr_url = os.environ["PR_URL"]
+
+          entry = f"- [@{login}](https://github.com/{login}) - [#{pr_number}]({pr_url}) {pr_title}\n"
+          if entry in text:
+              raise SystemExit(0)
+          if "No external contributors recorded yet." in text:
+              text = text.replace("No external contributors recorded yet.\n", "")
+          text = text.rstrip() + "\n" + entry
+          path.write_text(text)
+          PY
+
+      - name: Commit contributor update
+        run: |
+          if git diff --quiet CONTRIBUTORS.md; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CONTRIBUTORS.md
+          git commit -m "Recognize contributor"
+          git push
+
+      - name: Thank contributor
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: "Thanks for the contribution. This merged PR has been recorded in `CONTRIBUTORS.md`."
+            });

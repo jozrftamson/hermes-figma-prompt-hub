@@ -239,12 +239,21 @@ This repository includes automation for ongoing development and collaborator onb
 - `Issue welcome`: comments on new issues with contributor links and next steps.
 - `PR welcome`: comments on new PRs with the review checklist.
 - `Collaboration digest`: manually creates a GitHub issue summarizing current contributor opportunities.
+- `Prompt catalog`: generates `docs/prompt-catalog.md` from `prompts/raw/*.json`.
+- `Figma contract check`: keeps the layer contract, README, and fixtures synchronized.
+- `Good first issue seeding`: creates small contributor-friendly issues monthly.
+- `Stale issue ping`: reminds inactive issues after 30 days without closing them.
+- `Contributor recognition`: records merged PR contributors in `CONTRIBUTORS.md`.
+- `Schema release suggestion`: opens a release-planning issue after schema changes.
+- `Sponsor and contributor monthly update`: creates a monthly update issue for sponsors and collaborators.
 
 Local commands:
 
 ```bash
 python scripts/validate_repo.py
 python scripts/generate_collaboration_digest.py
+python scripts/generate_prompt_catalog.py
+python scripts/check_figma_contract.py
 ```
 
-See [COLLABORATION.md](COLLABORATION.md) and [docs/outreach/templates.md](docs/outreach/templates.md) for outreach templates and maintainer routines.
+See [COLLABORATION.md](COLLABORATION.md), [HUMAN_COLLABORATORS.md](HUMAN_COLLABORATORS.md), [docs/prompt-catalog.md](docs/prompt-catalog.md), and [docs/outreach/templates.md](docs/outreach/templates.md) for outreach templates, collaborator roles, and maintainer routines.

@@ -1,0 +1,69 @@
+name: Sponsor and contributor monthly update
+
+on:
+  schedule:
+    - cron: "0 9 1 * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create monthly update issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const since = new Date();
+            since.setDate(since.getDate() - 30);
+            const month = new Date().toISOString().slice(0, 7);
+            const commits = await github.rest.repos.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              since: since.toISOString(),
+              per_page: 10
+            });
+            const helpWanted = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: "help wanted",
+              state: "open",
+              per_page: 10
+            });
+            const commitLines = commits.data.length
+              ? commits.data.map(commit => `- ${commit.sha.slice(0, 7)} ${commit.commit.message.split("\n")[0]}`)
+              : ["- No commits in the last 30 days."];
+            const issueLines = helpWanted.data.length
+              ? helpWanted.data.map(issue => `- #${issue.number} ${issue.title}`)
+              : ["- No open `help wanted` issues right now."];
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Sponsor and contributor update: ${month}`,
+              labels: ["help wanted", "documentation"],
+              body: [
+                "Monthly project update for sponsors and contributors.",
+                "",
+                "## Recent commits",
+                ...commitLines,
+                "",
+                "## Open help wanted issues",
+                ...issueLines,
+                "",
+                "## Next roadmap items",
+                "- Figma importer for `PROMPT/<id>` frames.",
+                "- MCP server tools for listing, validating, and exporting prompts.",
+                "- More examples and eval fixtures.",
+                "",
+                "## Sponsor link",
+                "https://opencollective.com/hermes-figma-prompt-hub",
+                "",
+                "## Contributor links",
+                "- `COLLABORATION.md`",
+                "- `HUMAN_COLLABORATORS.md`",
+                "- `docs/prompt-catalog.md`"
+              ].join("\n")
+            });
+

@@ -1,4 +1,6 @@
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 from validate_prompt import PromptValidationError, validate_prompt
@@ -42,10 +44,20 @@ def validate_prompts() -> list[str]:
     return errors
 
 
+def run_check(command: list[str]) -> list[str]:
+    result = subprocess.run(command, cwd=ROOT, text=True, capture_output=True)
+    if result.returncode == 0:
+        return []
+    output = "\n".join(part for part in [result.stdout, result.stderr] if part)
+    return [output.strip() or f"Command failed: {' '.join(command)}"]
+
+
 def main() -> None:
     errors = []
     errors.extend(validate_json_files())
     errors.extend(validate_prompts())
+    errors.extend(run_check([sys.executable, "scripts/generate_prompt_catalog.py", "--check"]))
+    errors.extend(run_check([sys.executable, "scripts/check_figma_contract.py"]))
 
     if errors:
         print("Repository validation failed:")
@@ -58,4 +70,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
