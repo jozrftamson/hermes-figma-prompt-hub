@@ -1,30 +1,149 @@
 {
   "id": "nous-central-v1",
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "status": "active",
+  "category": "general-assistant",
+  "tags": [
+    "hermes",
+    "figma",
+    "prompt-hub"
+  ],
+  "model": "gpt-4.1",
+  "temperature": 0.2,
   "system": "Du bist ein präziser Assistent.",
-  "developer": "Antwort kurz, korrekt, ohne Floskeln.",
-  "user_template": "Kontext: {{context}}\nAufgabe: {{task}}",
+  "developer": "Antwort kurz, korrekt, ohne Floskeln. Markiere Unsicherheit klar und verwende nur den gegebenen Kontext.",
+  "user_template": "Kontext: {{context}}\nAufgabe: {{task}}\nGewünschtes Format: {{format}}",
+  "output_format": {
+    "type": "json",
+    "instructions": "Return valid JSON with summary, reasoning_notes and next_actions.",
+    "schema": {
+      "type": "object",
+      "required": [
+        "summary",
+        "reasoning_notes",
+        "next_actions"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "reasoning_notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "next_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
   "variables": [
     "context",
-    "task"
+    "task",
+    "format"
+  ],
+  "context_sources": [
+    {
+      "name": "figma_frame",
+      "type": "figma",
+      "required": false,
+      "description": "Optional Figma frame or layer context for design-aware prompts."
+    },
+    {
+      "name": "user_notes",
+      "type": "text",
+      "required": true,
+      "description": "Task notes supplied by the user."
+    }
+  ],
+  "tools": [
+    {
+      "name": "figma",
+      "allowed": true,
+      "policy": "Read Figma layer names and text only when explicit Figma context is supplied."
+    },
+    {
+      "name": "mcp",
+      "allowed": true,
+      "policy": "Use MCP tools for prompt listing, validation and export."
+    }
   ],
   "guardrails": [
     "Keine erfundenen Fakten",
-    "Bei Unsicherheit klar markieren"
+    "Bei Unsicherheit klar markieren",
+    "Keine privaten Tokens, Secrets oder internen URLs ausgeben"
+  ],
+  "constraints": [
+    "Use only supplied context unless the user explicitly asks for general guidance.",
+    "Cite relevant Figma layer names when Figma context is used.",
+    "Keep output concise and machine-readable."
+  ],
+  "style_rules": [
+    "Use direct language.",
+    "Avoid filler phrases.",
+    "Prefer actionable next steps."
   ],
   "few_shots": [
     {
-      "input": "task=Summarize X",
-      "output": "Kurzfassung ..."
+      "input": "context=Design notes for checkout frame\ntask=Summarize issues\nformat=json",
+      "output": "{\"summary\":\"Kurzfassung ...\",\"reasoning_notes\":[\"Layer names indicate checkout flow\"],\"next_actions\":[\"Review error state copy\"]}",
+      "notes": "Shows compact JSON output with actionable next steps."
+    }
+  ],
+  "changelog": [
+    {
+      "version": "0.2.0",
+      "date": "2026-07-12",
+      "changes": [
+        "Added output format contract",
+        "Added tools, context sources, constraints and style rules",
+        "Expanded eval checks"
+      ]
+    },
+    {
+      "version": "0.1.0",
+      "changes": [
+        "Initial prompt scaffold"
+      ]
     }
   ],
   "eval": {
     "must_include": [
-      "Kurzfassung"
+      "summary",
+      "next_actions"
     ],
     "must_not_include": [
       "Great question",
       "As an AI"
+    ],
+    "checks": [
+      {
+        "name": "valid_json_output",
+        "type": "json_schema",
+        "value": {
+          "type": "object",
+          "required": [
+            "summary",
+            "next_actions"
+          ]
+        },
+        "description": "Output should be parseable JSON with required top-level keys."
+      },
+      {
+        "name": "no_ai_disclaimer",
+        "type": "not_contains",
+        "value": "As an AI"
+      },
+      {
+        "name": "compact_response",
+        "type": "max_length",
+        "value": 1200
+      }
     ]
   }
 }

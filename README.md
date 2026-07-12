@@ -80,11 +80,22 @@ Figma Layer Contract (Frame: PROMPT/<id>)
 00_system
 01_developer
 02_user_template
+03_output_format
+04_tool_policy
+05_context_source_<name>
 10_guardrail_<n>
+11_constraint_<n>
+12_style_rule_<n>
 20_example_in_<n>
 21_example_out_<n>
+22_example_note_<n>
+30_variable_<name>
+40_test_case_<n>
+50_expected_output_<n>
+80_changelog_<version>
 90_eval_must_include_<n>
 91_eval_must_not_include_<n>
+92_eval_check_<n>
 ```
 
 ## Hermes MCP configuration
@@ -132,21 +143,78 @@ Prompt JSON files must match `prompts/schema/prompt.schema.json`:
 ```json
 {
   "id": "nous-central-v1",
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "status": "active",
+  "category": "general-assistant",
+  "tags": ["hermes", "figma", "prompt-hub"],
+  "model": "gpt-4.1",
+  "temperature": 0.2,
   "system": "Du bist ein präziser Assistent.",
-  "developer": "Antwort kurz, korrekt, ohne Floskeln.",
-  "user_template": "Kontext: {{context}}\nAufgabe: {{task}}",
-  "variables": ["context", "task"],
+  "developer": "Antwort kurz, korrekt, ohne Floskeln. Markiere Unsicherheit klar und verwende nur den gegebenen Kontext.",
+  "user_template": "Kontext: {{context}}\nAufgabe: {{task}}\nGewünschtes Format: {{format}}",
+  "output_format": {
+    "type": "json",
+    "instructions": "Return valid JSON with summary, reasoning_notes and next_actions."
+  },
+  "variables": ["context", "task", "format"],
+  "context_sources": [
+    {
+      "name": "figma_frame",
+      "type": "figma",
+      "required": false,
+      "description": "Optional Figma frame or layer context for design-aware prompts."
+    }
+  ],
+  "tools": [
+    {
+      "name": "mcp",
+      "allowed": true,
+      "policy": "Use MCP tools for prompt listing, validation and export."
+    }
+  ],
   "guardrails": ["Keine erfundenen Fakten", "Bei Unsicherheit klar markieren"],
+  "constraints": ["Use only supplied context.", "Keep output concise."],
+  "style_rules": ["Use direct language.", "Prefer actionable next steps."],
   "few_shots": [
     {
       "input": "task=Summarize X",
-      "output": "Kurzfassung ..."
+      "output": "{\"summary\":\"Kurzfassung ...\",\"next_actions\":[\"Review copy\"]}",
+      "notes": "Shows compact JSON output."
+    }
+  ],
+  "changelog": [
+    {
+      "version": "0.2.0",
+      "changes": ["Added output format, tools, constraints and eval checks"]
     }
   ],
   "eval": {
-    "must_include": ["Kurzfassung"],
-    "must_not_include": ["Great question", "As an AI"]
+    "must_include": ["summary", "next_actions"],
+    "must_not_include": ["Great question", "As an AI"],
+    "checks": [
+      {
+        "name": "valid_json_output",
+        "type": "json_schema",
+        "value": {
+          "type": "object",
+          "required": ["summary", "next_actions"]
+        }
+      }
+    ]
   }
 }
 ```
+
+Supported prompt extensions:
+
+- `status`: draft, active or deprecated lifecycle state.
+- `category` and `tags`: prompt grouping for search and catalog views.
+- `model` and `temperature`: recommended runtime defaults.
+- `output_format`: expected text, markdown or JSON response contract.
+- `context_sources`: named inputs such as Figma frames, user notes or documents.
+- `tools`: allowed tool names and usage policies.
+- `constraints`: hard behavioral limits.
+- `style_rules`: tone and formatting preferences.
+- `few_shots[].notes`: explanation for examples.
+- `changelog`: prompt version history.
+- `eval.checks`: structured checks such as contains, not_contains, regex, json_schema and max_length.

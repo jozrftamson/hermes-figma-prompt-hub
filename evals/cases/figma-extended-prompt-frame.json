@@ -1,0 +1,102 @@
+{
+  "name": "PROMPT/nous-central-v1",
+  "type": "FRAME",
+  "children": [
+    {
+      "name": "00_system",
+      "type": "TEXT",
+      "characters": "Du bist ein präziser Assistent."
+    },
+    {
+      "name": "01_developer",
+      "type": "TEXT",
+      "characters": "Antwort kurz, korrekt, ohne Floskeln. Markiere Unsicherheit klar."
+    },
+    {
+      "name": "02_user_template",
+      "type": "TEXT",
+      "characters": "Kontext: {{context}}\nAufgabe: {{task}}\nGewünschtes Format: {{format}}"
+    },
+    {
+      "name": "03_output_format",
+      "type": "TEXT",
+      "characters": "json"
+    },
+    {
+      "name": "04_tool_policy",
+      "type": "TEXT",
+      "characters": "mcp: Use MCP tools for prompt listing, validation and export."
+    },
+    {
+      "name": "05_context_source_figma_frame",
+      "type": "TEXT",
+      "characters": "Optional Figma frame or layer context for design-aware prompts."
+    },
+    {
+      "name": "10_guardrail_1",
+      "type": "TEXT",
+      "characters": "Keine erfundenen Fakten"
+    },
+    {
+      "name": "11_constraint_1",
+      "type": "TEXT",
+      "characters": "Use only supplied context."
+    },
+    {
+      "name": "12_style_rule_1",
+      "type": "TEXT",
+      "characters": "Use direct language."
+    },
+    {
+      "name": "20_example_in_1",
+      "type": "TEXT",
+      "characters": "context=Design notes\ntask=Summarize issues\nformat=json"
+    },
+    {
+      "name": "21_example_out_1",
+      "type": "TEXT",
+      "characters": "{\"summary\":\"Kurzfassung ...\",\"next_actions\":[\"Review copy\"]}"
+    },
+    {
+      "name": "22_example_note_1",
+      "type": "TEXT",
+      "characters": "Shows compact JSON output."
+    },
+    {
+      "name": "30_variable_context",
+      "type": "TEXT",
+      "characters": "Primary task context."
+    },
+    {
+      "name": "40_test_case_1",
+      "type": "TEXT",
+      "characters": "Given design notes, return valid JSON."
+    },
+    {
+      "name": "50_expected_output_1",
+      "type": "TEXT",
+      "characters": "JSON with summary and next_actions."
+    },
+    {
+      "name": "80_changelog_0.2.0",
+      "type": "TEXT",
+      "characters": "Added output format, tools, constraints and eval checks."
+    },
+    {
+      "name": "90_eval_must_include_1",
+      "type": "TEXT",
+      "characters": "summary"
+    },
+    {
+      "name": "91_eval_must_not_include_1",
+      "type": "TEXT",
+      "characters": "As an AI"
+    },
+    {
+      "name": "92_eval_check_1",
+      "type": "TEXT",
+      "characters": "json_schema: require summary and next_actions"
+    }
+  ]
+}
+
