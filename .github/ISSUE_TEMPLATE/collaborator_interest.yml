@@ -1,0 +1,47 @@
+name: Collaborator interest
+description: Introduce yourself as a potential collaborator.
+title: "collaboration: "
+labels: ["help wanted"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your interest in collaborating on Hermes Figma Prompt Hub.
+        Use this form to describe where you want to help.
+  - type: checkboxes
+    id: areas
+    attributes:
+      label: Areas of interest
+      options:
+        - label: Figma API importer
+        - label: MCP server
+        - label: Prompt schema and validation
+        - label: Examples and eval fixtures
+        - label: Documentation
+        - label: Issue triage and maintainer support
+  - type: textarea
+    id: background
+    attributes:
+      label: Background
+      description: Share relevant experience, projects, or links.
+    validations:
+      required: false
+  - type: textarea
+    id: first_contribution
+    attributes:
+      label: First contribution idea
+      description: What small contribution would you like to start with?
+    validations:
+      required: false
+  - type: dropdown
+    id: availability
+    attributes:
+      label: Availability
+      options:
+        - One small PR
+        - Occasional contributions
+        - Regular maintainer help
+        - Not sure yet
+    validations:
+      required: false
+

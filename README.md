@@ -44,10 +44,22 @@ python3 -m venv .venv
 pip install jsonschema
 ```
 
+Or install pinned project dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
 Validate the included example prompt:
 
 ```bash
 python scripts/validate_prompt.py prompts/raw/nous-central-v1.json
+```
+
+Validate the full repository:
+
+```bash
+python scripts/validate_repo.py
 ```
 
 Create or refresh the scaffold files in the current project:
@@ -218,3 +230,21 @@ Supported prompt extensions:
 - `few_shots[].notes`: explanation for examples.
 - `changelog`: prompt version history.
 - `eval.checks`: structured checks such as contains, not_contains, regex, json_schema and max_length.
+
+## Development automation
+
+This repository includes automation for ongoing development and collaborator onboarding:
+
+- `CI`: validates prompt JSON, compiles Python files, and tests scaffold output on pushes and PRs.
+- `Issue welcome`: comments on new issues with contributor links and next steps.
+- `PR welcome`: comments on new PRs with the review checklist.
+- `Collaboration digest`: manually creates a GitHub issue summarizing current contributor opportunities.
+
+Local commands:
+
+```bash
+python scripts/validate_repo.py
+python scripts/generate_collaboration_digest.py
+```
+
+See [COLLABORATION.md](COLLABORATION.md) and [docs/outreach/templates.md](docs/outreach/templates.md) for outreach templates and maintainer routines.

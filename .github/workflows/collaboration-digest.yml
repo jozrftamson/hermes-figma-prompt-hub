@@ -1,0 +1,46 @@
+name: Collaboration digest
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  create-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create collaboration issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = "Collaboration digest: current contributor opportunities";
+            const body = [
+              "This issue summarizes current collaboration opportunities for new contributors.",
+              "",
+              "## Current focus",
+              "- Figma importer: convert `PROMPT/<id>` frames into prompt JSON.",
+              "- MCP server: list, validate, and export prompt assets.",
+              "- Prompt quality: add examples, eval cases, and schema improvements.",
+              "- Documentation: make setup easier for Hermes users.",
+              "",
+              "## Good first contributions",
+              "- Add one prompt example under `prompts/raw`.",
+              "- Add one Figma fixture under `evals/cases`.",
+              "- Improve validation errors or docs.",
+              "- Test the scaffold on a new local project.",
+              "",
+              "## Links",
+              "- Contributing: https://github.com/jozrftamson/hermes-figma-prompt-hub/blob/main/CONTRIBUTING.md",
+              "- Roadmap: https://github.com/jozrftamson/hermes-figma-prompt-hub/blob/main/ROADMAP.md",
+              "- Sponsoring: https://github.com/jozrftamson/hermes-figma-prompt-hub/blob/main/SPONSORING.md"
+            ].join("\\n");
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ["help wanted"]
+            });
+

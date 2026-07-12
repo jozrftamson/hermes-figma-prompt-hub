@@ -19,6 +19,7 @@ python3 -m venv .venv
 . .venv/bin/activate
 pip install jsonschema
 python scripts/validate_prompt.py prompts/raw/nous-central-v1.json
+python scripts/validate_repo.py
 ```
 
 ## Pull request checklist
@@ -29,8 +30,14 @@ python scripts/validate_prompt.py prompts/raw/nous-central-v1.json
 - Run validation before opening a PR:
 
 ```bash
-python scripts/validate_prompt.py prompts/raw/nous-central-v1.json
+python scripts/validate_repo.py
 ```
+
+## Automation
+
+GitHub Actions run validation on pushes and pull requests. New issues and pull requests receive automatic comments with contributor links and checklists.
+
+Maintainers can run the manual `Collaboration digest` workflow from the GitHub Actions tab to create a fresh issue that advertises current contributor opportunities.
 
 ## Good first issues
 
@@ -44,4 +51,3 @@ Good first issues should be small, testable, and documented. Examples:
 ## Maintainer notes
 
 When reviewing contributions, prefer small PRs with clear user value. For larger features, ask contributors to open an issue first so the design can be discussed before implementation.
-

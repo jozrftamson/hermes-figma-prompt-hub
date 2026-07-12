@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate repository
+        run: python scripts/validate_repo.py
+
+      - name: Compile Python files
+        run: python -m py_compile install/scaffold.py scripts/validate_prompt.py scripts/validate_repo.py
+
+      - name: Test scaffold output
+        run: |
+          python install/scaffold.py /tmp/hermes-figma-prompt-hub-check
+          python /tmp/hermes-figma-prompt-hub-check/scripts/validate_prompt.py /tmp/hermes-figma-prompt-hub-check/prompts/raw/nous-central-v1.json
+
