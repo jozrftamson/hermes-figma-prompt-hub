@@ -206,6 +206,7 @@ Near-term work:
 See [ROADMAP.md](ROADMAP.md).
 
 For a deeper technical overview, see [docs/architecture.md](docs/architecture.md). For first-time setup, see [docs/getting-started.md](docs/getting-started.md).
+For project-board setup, see [docs/project-board.md](docs/project-board.md).
 
 ## Contributing
 
