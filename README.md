@@ -22,6 +22,14 @@ Start here:
 - Pick an item from [ROADMAP.md](ROADMAP.md).
 - Open or claim an issue with the `good first issue` or `help wanted` label.
 
+## Sponsor development
+
+If this project is useful to you, you can sponsor ongoing development through GitHub Sponsors:
+
+https://github.com/sponsors/jozrftamson
+
+Sponsorship helps fund Figma API importer work, MCP server development, prompt validation, documentation, and contributor support. See [SPONSORING.md](SPONSORING.md) for details.
+
 ## Installation
 
 ```bash
