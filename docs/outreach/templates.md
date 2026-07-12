@@ -25,6 +25,23 @@ There are small, scoped tasks around <specific task>. If this is interesting, th
 https://github.com/jozrftamson/hermes-figma-prompt-hub
 ```
 
+## Contributor scout follow-up
+
+```text
+Hi <name>,
+
+I found your public work around <topic> while looking for possible collaborators for Hermes Figma Prompt Hub.
+
+The project is focused on Figma-to-MCP prompt management for Hermes workflows. A small area where your experience may fit:
+
+- <specific issue or task>
+
+Repo:
+https://github.com/jozrftamson/hermes-figma-prompt-hub
+
+No pressure. If this is interesting, feedback on the issue or a small PR would be welcome.
+```
+
 ## Organization sponsor invite
 
 ```text
@@ -37,4 +54,3 @@ The project is looking for collaborators and sponsors for importer, MCP, validat
 Sponsorship plan:
 https://github.com/jozrftamson/hermes-figma-prompt-hub/blob/main/SPONSORING.md
 ```
-

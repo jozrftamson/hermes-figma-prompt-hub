@@ -2,7 +2,11 @@
 
 Standalone Figma/Hermes prompt hub scaffold for designing, versioning, and validating structured prompt assets outside the Hermes core tree.
 
+Figma-to-MCP prompt management for Hermes workflows.
+
 This project was split out from a Hermes core-tree integration proposal. It is intended to be used as an external project or plugin-style companion repository.
+
+License: MIT.
 
 ## Contributors wanted
 
@@ -246,6 +250,7 @@ This repository includes automation for ongoing development and collaborator onb
 - `Contributor recognition`: records merged PR contributors in `CONTRIBUTORS.md`.
 - `Schema release suggestion`: opens a release-planning issue after schema changes.
 - `Sponsor and contributor monthly update`: creates a monthly update issue for sponsors and collaborators.
+- `Contributor scout`: creates a monthly manual-review shortlist of potential collaborators.
 
 Local commands:
 
@@ -254,6 +259,7 @@ python scripts/validate_repo.py
 python scripts/generate_collaboration_digest.py
 python scripts/generate_prompt_catalog.py
 python scripts/check_figma_contract.py
+python scripts/scout_collaborators.py
 ```
 
 See [COLLABORATION.md](COLLABORATION.md), [HUMAN_COLLABORATORS.md](HUMAN_COLLABORATORS.md), [docs/prompt-catalog.md](docs/prompt-catalog.md), and [docs/outreach/templates.md](docs/outreach/templates.md) for outreach templates, collaborator roles, and maintainer routines.

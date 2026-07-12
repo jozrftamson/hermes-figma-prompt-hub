@@ -25,6 +25,7 @@ This project welcomes contributors for Python, Figma API work, MCP integration, 
 - Weekly: keep at least one `good first issue` open.
 - Monthly: run the `Collaboration digest` workflow and share the created issue.
 - Monthly: review automatically created good-first issues and monthly sponsor updates.
+- Monthly: review the `Contributor scout` report and contact only a few relevant people manually.
 - Monthly: publish a short sponsor/contributor update.
 - Each release: update `ROADMAP.md` and prompt examples.
 
@@ -37,6 +38,7 @@ This project welcomes contributors for Python, Figma API work, MCP integration, 
 - `Sponsor and contributor monthly update`: creates a monthly update issue.
 - `Prompt catalog`: regenerates `docs/prompt-catalog.md`.
 - `Figma contract check`: verifies README, contract, and fixtures stay aligned.
+- `Contributor scout`: searches public GitHub repositories and creates a manual-review shortlist. It does not contact anyone automatically.
 
 ## Outreach channels
 

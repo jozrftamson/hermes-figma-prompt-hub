@@ -1,0 +1,38 @@
+name: Contributor scout
+
+on:
+  schedule:
+    - cron: "0 8 15 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate collaborator shortlist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/scout_collaborators.py --limit-per-topic 8 --max-candidates 20
+
+      - name: Create scouting issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          month="$(date -u +%Y-%m)"
+          gh issue create \
+            --title "Collaboration scouting report: ${month}" \
+            --label "help wanted" \
+            --body-file docs/outreach/collaborator-shortlist.md
+
