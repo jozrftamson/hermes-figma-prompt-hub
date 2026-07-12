@@ -252,6 +252,7 @@ This repository includes automation for ongoing development and collaborator onb
 - `Sponsor and contributor monthly update`: creates a monthly update issue for sponsors and collaborators.
 - `Contributor scout`: creates a monthly manual-review shortlist of potential collaborators.
 - `Automation health`: scans failed GitHub Actions runs, creates diagnostic issues, and suggests follow-up automation.
+- `Automated code review`: reviews PR diffs for repository-specific risks and posts a PR comment.
 
 Local commands:
 
@@ -262,6 +263,7 @@ python scripts/generate_prompt_catalog.py
 python scripts/check_figma_contract.py
 python scripts/scout_collaborators.py
 python scripts/diagnose_automation_failures.py --limit 30
+python scripts/code_review.py --base origin/main
 ```
 
 See [COLLABORATION.md](COLLABORATION.md), [HUMAN_COLLABORATORS.md](HUMAN_COLLABORATORS.md), [docs/prompt-catalog.md](docs/prompt-catalog.md), and [docs/outreach/templates.md](docs/outreach/templates.md) for outreach templates, collaborator roles, and maintainer routines.
