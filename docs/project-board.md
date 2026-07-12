@@ -6,6 +6,18 @@ Recommended GitHub Project board:
 Hermes Figma Prompt Hub Roadmap
 ```
 
+Created board:
+
+```text
+https://github.com/users/jozrftamson/projects/5
+```
+
+Project number:
+
+```text
+5
+```
+
 Columns/status values:
 
 - Backlog
@@ -21,7 +33,13 @@ Suggested views:
 - Automation
 - MCP and Figma Importer
 
-To create this with GitHub CLI, first grant the `project` scope:
+The board is linked to:
+
+```text
+jozrftamson/hermes-figma-prompt-hub
+```
+
+If this needs to be recreated with GitHub CLI, first grant the `project` scope:
 
 ```bash
 gh auth refresh -s project
@@ -43,4 +61,3 @@ In progress
 Review
 Done
 ```
-
