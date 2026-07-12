@@ -4,6 +4,24 @@ Standalone Figma/Hermes prompt hub scaffold for designing, versioning, and valid
 
 This project was split out from a Hermes core-tree integration proposal. It is intended to be used as an external project or plugin-style companion repository.
 
+## Contributors wanted
+
+This repository is looking for contributors who want to help turn the scaffold into a useful Figma/Hermes MCP integration.
+
+Good first areas:
+
+- Build a Figma API importer that converts `PROMPT/<id>` frames into prompt JSON.
+- Implement `mcp/server.py` with tools for listing, validating, and exporting prompts.
+- Add prompt examples and eval cases under `prompts/raw` and `evals/cases`.
+- Improve docs for Hermes MCP setup and Figma token handling.
+- Add tests for schema validation and future importer behavior.
+
+Start here:
+
+- Read [CONTRIBUTING.md](CONTRIBUTING.md).
+- Pick an item from [ROADMAP.md](ROADMAP.md).
+- Open or claim an issue with the `good first issue` or `help wanted` label.
+
 ## Installation
 
 ```bash
@@ -120,4 +138,3 @@ Prompt JSON files must match `prompts/schema/prompt.schema.json`:
   }
 }
 ```
-

@@ -1,0 +1,27 @@
+name: Feature request
+description: Suggest a feature for the Figma/Hermes prompt hub.
+title: "feat: "
+labels: ["enhancement", "help wanted"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should this feature make possible?
+    validations:
+      required: true
+  - type: textarea
+    id: design
+    attributes:
+      label: Proposed design
+      description: Describe the API, command, file format, or MCP tool shape if you have one.
+    validations:
+      required: false
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I am willing to work on this.
+          required: false
+

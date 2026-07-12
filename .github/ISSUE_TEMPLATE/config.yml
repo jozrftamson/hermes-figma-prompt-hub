@@ -1,0 +1,6 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Contribution guide
+    url: https://github.com/jozrftamson/hermes-figma-prompt-hub/blob/main/CONTRIBUTING.md
+    about: Read this before opening a larger contribution.
+
