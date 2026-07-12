@@ -28,6 +28,8 @@ Validation scripts check:
 - prompt schema compliance
 - prompt catalog freshness
 - Figma contract consistency across README and fixtures
+- prompt pattern report freshness
+- prompt security audit freshness
 
 ### MCP Direction
 
@@ -49,4 +51,3 @@ Figma PROMPT/<id> frame
   -> MCP tools
   -> Hermes workflow
 ```
-

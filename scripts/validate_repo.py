@@ -57,6 +57,8 @@ def main() -> None:
     errors.extend(validate_json_files())
     errors.extend(validate_prompts())
     errors.extend(run_check([sys.executable, "scripts/generate_prompt_catalog.py", "--check"]))
+    errors.extend(run_check([sys.executable, "scripts/analyze_prompt_patterns.py", "--check"]))
+    errors.extend(run_check([sys.executable, "scripts/security_prompt_audit.py", "--check"]))
     errors.extend(run_check([sys.executable, "scripts/check_figma_contract.py"]))
 
     if errors:

@@ -24,6 +24,7 @@ This repository is currently an integration scaffold.
 - A structured JSON prompt format for system, developer, user template, variables, guardrails, tools, output format, examples, changelog, and eval checks.
 - A Figma layer naming contract for frames named `PROMPT/<id>`.
 - Validation scripts for prompts, schema consistency, prompt catalog generation, and Figma contract alignment.
+- Prompt pattern analysis and prompt security audit reports.
 - GitHub automation for CI, code review, contributor onboarding, issue health, prompt catalog updates, and collaboration scouting.
 - Documentation and issue templates for contributors, sponsors, and maintainers.
 
@@ -187,6 +188,9 @@ Useful local commands:
 ```bash
 python scripts/validate_repo.py
 python scripts/check_figma_contract.py
+python scripts/analyze_prompt_patterns.py
+python scripts/security_prompt_audit.py
+python scripts/import_prompt_text.py local-prompt.txt --id my-prompt
 python scripts/generate_prompt_catalog.py
 python scripts/code_review.py --base origin/main
 python scripts/diagnose_automation_failures.py --limit 30
