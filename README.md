@@ -1,5 +1,10 @@
 # Hermes Figma Prompt Hub
 
+[![CI](https://github.com/jozrftamson/hermes-figma-prompt-hub/actions/workflows/ci.yml/badge.svg)](https://github.com/jozrftamson/hermes-figma-prompt-hub/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-fafbfc?logo=github-sponsors)](https://github.com/sponsors/jozrftamson)
+[![OpenCollective](https://img.shields.io/badge/OpenCollective-support-blue?logo=opencollective)](https://opencollective.com/hermes-figma-prompt-hub)
+
 Figma-to-MCP prompt management for Hermes workflows.
 
 Hermes Figma Prompt Hub is an open-source scaffold for designing, versioning, validating, and eventually serving structured prompt assets from Figma into Hermes-compatible MCP workflows.
@@ -200,6 +205,8 @@ Near-term work:
 
 See [ROADMAP.md](ROADMAP.md).
 
+For a deeper technical overview, see [docs/architecture.md](docs/architecture.md). For first-time setup, see [docs/getting-started.md](docs/getting-started.md).
+
 ## Contributing
 
 Good first areas:
@@ -228,4 +235,3 @@ See [SPONSORING.md](SPONSORING.md).
 ## License
 
 MIT. See [LICENSE](LICENSE).
-
