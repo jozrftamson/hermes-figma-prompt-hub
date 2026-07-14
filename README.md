@@ -11,6 +11,22 @@ Hermes Figma Prompt Hub is an open-source scaffold for designing, versioning, va
 
 The project keeps Figma-specific integration work outside the Hermes core repository while giving teams a clear place to build prompt tooling, validation, importer logic, examples, and automation.
 
+## Upstream
+
+Hermes core repository:
+
+```text
+https://github.com/NousResearch/hermes-agent
+```
+
+Local upstream remote:
+
+```bash
+git remote add upstream git@github.com:NousResearch/hermes-agent.git
+```
+
+This project remains an external integration repository so Figma-specific code can evolve outside the Hermes core tree.
+
 ## Status
 
 This repository is currently an integration scaffold.
