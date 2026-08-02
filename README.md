@@ -256,3 +256,12 @@ See [SPONSORING.md](SPONSORING.md).
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Setup (quick start)
+
+1. Clone this repository.
+2. Copy any example env file if present (`.env.example` → `.env`).
+3. Install dependencies with the package manager documented above (npm / pnpm / yarn).
+4. Run the project's start/dev script from `package.json`.
+
+> Docs PR for good-first-issue #14 — setup clarity.
