@@ -259,9 +259,59 @@ MIT. See [LICENSE](LICENSE).
 
 ## Setup (quick start)
 
-1. Clone this repository.
-2. Copy any example env file if present (`.env.example` → `.env`).
-3. Install dependencies with the package manager documented above (npm / pnpm / yarn).
-4. Run the project's start/dev script from `package.json`.
+### Prerequisites
 
-> Docs PR for good-first-issue #14 — setup clarity.
+- Python 3.8 or higher
+- Git
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/jozrftamson/hermes-figma-prompt-hub.git
+   cd hermes-figma-prompt-hub
+   ```
+
+2. **Create a virtual environment**
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Verify your setup**
+   ```bash
+   python scripts/validate_repo.py
+   ```
+
+### Environment Variables
+
+Copy the example environment file if present:
+```bash
+cp .env.example .env
+```
+
+Set required variables for Figma integration:
+```bash
+export FIGMA_ACCESS_TOKEN="your_token_here"
+export FIGMA_FILE_KEY="your_file_key_here"
+```
+
+### Running the Project
+
+```bash
+# Validate all prompts
+python scripts/validate_repo.py
+
+# Check Figma contract
+python scripts/check_figma_contract.py
+
+# Generate prompt catalog
+python scripts/generate_prompt_catalog.py
+```
+
+For detailed setup instructions, see [CONTRIBUTING.md](CONTRIBUTING.md).
