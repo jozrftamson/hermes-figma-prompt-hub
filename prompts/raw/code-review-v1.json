@@ -1,0 +1,151 @@
+{
+  "id": "code-review-v1",
+  "version": "0.1.0",
+  "status": "active",
+  "category": "code-review",
+  "tags": [
+    "code-review",
+    "development",
+    "quality"
+  ],
+  "model": "gpt-4.1",
+  "temperature": 0.1,
+  "system": "You are an expert code reviewer. Provide constructive, actionable feedback on code changes.",
+  "developer": "Focus on correctness, security, performance, and maintainability. Be specific about issues and suggest improvements.",
+  "user_template": "Review the following code change:\n\n```{{language}}\n{{code}}\n```\n\nContext: {{context}}\n\nProvide a structured review.",
+  "output_format": {
+    "type": "json",
+    "instructions": "Return valid JSON with summary, issues, suggestions, and approval_status.",
+    "schema": {
+      "type": "object",
+      "required": [
+        "summary",
+        "issues",
+        "suggestions",
+        "approval_status"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "severity": {
+                "type": "string",
+                "enum": ["critical", "major", "minor"]
+              },
+              "description": {
+                "type": "string"
+              },
+              "line": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "suggestions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "approval_status": {
+          "type": "string",
+          "enum": ["approve", "request_changes", "comment"]
+        }
+      }
+    }
+  },
+  "variables": [
+    "language",
+    "code",
+    "context"
+  ],
+  "context_sources": [
+    {
+      "name": "pull_request",
+      "type": "github",
+      "required": false,
+      "description": "Optional PR context for review."
+    },
+    {
+      "name": "coding_standards",
+      "type": "text",
+      "required": false,
+      "description": "Optional coding standards or guidelines."
+    }
+  ],
+  "tools": [
+    {
+      "name": "github",
+      "allowed": true,
+      "policy": "Read PR details and file changes when reviewing code."
+    }
+  ],
+  "guardrails": [
+    "Do not suggest changes that break functionality",
+    "Focus on actionable improvements",
+    "Respect existing code style unless it violates standards"
+  ],
+  "constraints": [
+    "Keep feedback constructive and professional",
+    "Prioritize critical issues over style preferences",
+    "Reference specific line numbers when possible"
+  ],
+  "style_rules": [
+    "Use clear, concise language",
+    "Provide code examples for suggestions",
+    "Start with positives before noting issues"
+  ],
+  "few_shots": [
+    {
+      "input": "language=python\ncode=def add(a, b):\n    return a + b\ncontext=Simple addition function",
+      "output": "{\"summary\":\"Clean implementation of addition function.\",\"issues\":[],\"suggestions\":[\"Consider adding type hints for better documentation\"],\"approval_status\":\"approve\"}",
+      "notes": "Shows approval with minor suggestion."
+    }
+  ],
+  "changelog": [
+    {
+      "version": "0.1.0",
+      "date": "2026-08-16",
+      "changes": [
+        "Initial code review prompt"
+      ]
+    }
+  ],
+  "eval": {
+    "must_include": [
+      "summary",
+      "approval_status"
+    ],
+    "must_not_include": [
+      "I cannot review code",
+      "As an AI"
+    ],
+    "checks": [
+      {
+        "name": "valid_json_output",
+        "type": "json_schema",
+        "value": {
+          "type": "object",
+          "required": [
+            "summary",
+            "issues",
+            "suggestions",
+            "approval_status"
+          ]
+        },
+        "description": "Output should be parseable JSON with required top-level keys."
+      },
+      {
+        "name": "valid_approval_status",
+        "type": "enum",
+        "value": ["approve", "request_changes", "comment"],
+        "description": "Approval status must be one of the valid options."
+      }
+    ]
+  }
+}
