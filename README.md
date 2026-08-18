@@ -98,3 +98,33 @@ pip install -r requirements.txt
 python scripts/validate_repo.py
 ```
 This will set up the project, install the required dependencies, and validate the repository.
+
+## Figma Contract
+
+Create Figma frames named `PROMPT/<id>`. Text layers should use the naming contract in `prompts/figma-layer-contract.txt`.
+
+Current layer names:
+
+```text
+00_system
+01_developer
+02_user_template
+03_output_format
+04_tool_policy
+05_context_source_<name>
+10_guardrail_<n>
+11_constraint_<n>
+12_style_rule_<n>
+20_example_in_<n>
+21_example_out_<n>
+22_example_note_<n>
+30_variable_<name>
+40_test_case_<n>
+50_expected_output_<n>
+80_changelog_<version>
+90_eval_must_include_<n>
+91_eval_must_not_include_<n>
+92_eval_check_<n>
+```
+
+Fixture data for importer development lives under `evals/cases`. A minimal importer test input is `evals/cases/figma-example-v1-prompt-frame.json` (frame `PROMPT/example-v1`), with a larger one at `evals/cases/figma-extended-prompt-frame.json`.
