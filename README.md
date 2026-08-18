@@ -153,7 +153,7 @@ Current layer names:
 92_eval_check_<n>
 ```
 
-Fixture data for importer development lives under `evals/cases`.
+Fixture data for importer development lives under `evals/cases`. A minimal importer test input is `evals/cases/figma-example-v1-prompt-frame.json` (frame `PROMPT/example-v1`), with a larger one at `evals/cases/figma-extended-prompt-frame.json`.
 
 ## MCP Direction
 
