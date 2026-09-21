@@ -38,7 +38,7 @@ Prompt count: `2`
 
 ### figma-ui-review-v1
 
-- File: `prompts\raw\figma-ui-review-v1.json`
+- File: `prompts/raw/figma-ui-review-v1.json`
 - Version: `1.0.0`
 - Status: `active`
 - Guardrails: `4`
@@ -48,7 +48,7 @@ Prompt count: `2`
 
 ### nous-central-v1
 
-- File: `prompts\raw\nous-central-v1.json`
+- File: `prompts/raw/nous-central-v1.json`
 - Version: `0.2.0`
 - Status: `active`
 - Guardrails: `4`
