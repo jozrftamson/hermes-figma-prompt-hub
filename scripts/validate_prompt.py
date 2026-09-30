@@ -28,6 +28,14 @@ def format_validation_error(error: ValidationError) -> str:
     location = ".".join(str(part) for part in error.absolute_path)
     if not location:
         location = "<root>"
+    if error.validator == "required":
+        missing = [
+            name
+            for name in error.validator_value
+            if not isinstance(error.instance, dict) or name not in error.instance
+        ]
+        fields = ", ".join(missing) if missing else error.message
+        return f"Missing required field(s) at {location}: {fields}"
     return f"Schema validation failed at {location}: {error.message}"
 
 
