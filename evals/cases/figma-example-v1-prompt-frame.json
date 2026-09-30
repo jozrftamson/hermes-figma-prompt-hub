@@ -1,0 +1,101 @@
+{
+  "name": "PROMPT/example-v1",
+  "type": "FRAME",
+  "children": [
+    {
+      "name": "00_system",
+      "type": "TEXT",
+      "characters": "You are a helpful assistant."
+    },
+    {
+      "name": "01_developer",
+      "type": "TEXT",
+      "characters": "Answer concisely and factually."
+    },
+    {
+      "name": "02_user_template",
+      "type": "TEXT",
+      "characters": "Context: {{context}}\nTask: {{task}}"
+    },
+    {
+      "name": "03_output_format",
+      "type": "TEXT",
+      "characters": "text"
+    },
+    {
+      "name": "04_tool_policy",
+      "type": "TEXT",
+      "characters": "none"
+    },
+    {
+      "name": "05_context_source_design_notes",
+      "type": "TEXT",
+      "characters": "Design notes layer."
+    },
+    {
+      "name": "10_guardrail_1",
+      "type": "TEXT",
+      "characters": "Do not fabricate facts."
+    },
+    {
+      "name": "11_constraint_1",
+      "type": "TEXT",
+      "characters": "Use only the supplied context."
+    },
+    {
+      "name": "12_style_rule_1",
+      "type": "TEXT",
+      "characters": "Use direct language."
+    },
+    {
+      "name": "20_example_in_1",
+      "type": "TEXT",
+      "characters": "context=Design notes\ntask=Summarize issues"
+    },
+    {
+      "name": "21_example_out_1",
+      "type": "TEXT",
+      "characters": "A short bullet list of the issues."
+    },
+    {
+      "name": "22_example_note_1",
+      "type": "TEXT",
+      "characters": "Keep the summary under five bullets."
+    },
+    {
+      "name": "30_variable_context",
+      "type": "TEXT",
+      "characters": "Primary task context."
+    },
+    {
+      "name": "40_test_case_1",
+      "type": "TEXT",
+      "characters": "Given design notes, return a short summary."
+    },
+    {
+      "name": "50_expected_output_1",
+      "type": "TEXT",
+      "characters": "A short bullet list derived from the notes."
+    },
+    {
+      "name": "80_changelog_0.1.0",
+      "type": "TEXT",
+      "characters": "Initial example frame."
+    },
+    {
+      "name": "90_eval_must_include_1",
+      "type": "TEXT",
+      "characters": "summary"
+    },
+    {
+      "name": "91_eval_must_not_include_1",
+      "type": "TEXT",
+      "characters": "As an AI"
+    },
+    {
+      "name": "92_eval_check_1",
+      "type": "TEXT",
+      "characters": "json_schema: require summary"
+    }
+  ]
+}
