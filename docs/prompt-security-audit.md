@@ -6,13 +6,13 @@ This audit checks prompt files for leakage risks and missing security guardrails
 
 ## figma-ui-review-v1
 
-- File: `prompts\raw\figma-ui-review-v1.json`
+- File: `prompts/raw/figma-ui-review-v1.json`
 - Findings:
   - missing explicit hidden-instruction leakage guardrail
 
 ## nous-central-v1
 
-- File: `prompts\raw\nous-central-v1.json`
+- File: `prompts/raw/nous-central-v1.json`
 - Findings: none
 
 ## Recommended baseline guardrails
