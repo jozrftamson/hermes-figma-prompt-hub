@@ -1,23 +1,38 @@
 {
-  "id": "prompt-example-001",
-  "title": "Code Review Prompt",
-  "description": "A structured prompt for conducting thorough code reviews",
+  "prompt_id": "code-review-001",
+  "name": "Code Review Prompt",
+  "description": "A structured prompt for conducting thorough code reviews with systematic analysis",
   "category": "analysis",
   "strategy": "chain-of-thought",
-  "version": "1.0",
-  "system": "You are an expert code reviewer. Analyze code systematically and provide constructive feedback.",
-  "user_template": "Please review this code:\n\n```\n{{code}}\n```",
+  "version": "v1.0",
+  "system": "You are an expert code reviewer. Analyze code systematically and provide constructive feedback. Think through each aspect step-by-step: logic correctness, performance, security, and readability.",
+  "user_template": "Please review this code:\n\n```\n{{code}}\n```\n\nFocus on: {{focus_areas}}",
   "guardrails": [
     "Focus on logic correctness first",
     "Check for performance issues",
     "Verify security considerations",
     "Suggest improvements for readability"
   ],
-  "output_format": "Structured feedback with specific sections: Logic, Performance, Security, Readability",
+  "output_format": {
+    "structure": "Numbered sections for Logic, Performance, Security, Readability",
+    "include_examples": true,
+    "max_length": "2000 tokens"
+  },
+  "variables": {
+    "code": "The code snippet to review",
+    "focus_areas": "Specific areas to focus on (e.g., 'performance and security')"
+  },
+  "examples": [
+    {
+      "input": "Review this Python code:\n```python\nfor i in range(len(arr)):\n    print(arr[i])\n```\nFocus on: readability",
+      "output": "1. **Logic**: Correct - iterates through array\n2. **Performance**: Acceptable for small arrays\n3. **Security**: No issues detected\n4. **Readability**: Use direct iteration instead\n\nSuggestion:\n```python\nfor item in arr:\n    print(item)\n```",
+      "explanation": "Direct iteration is more Pythonic and readable than index-based loops"
+    }
+  ],
   "metadata": {
     "author": "Hermes Team",
     "created": "2026-07-12",
-    "updated": "2026-07-12",
-    "tags": ["code-review", "analysis", "feedback"]
+    "updated": "2026-10-13",
+    "tags": ["code-review", "analysis", "feedback", "code-quality"]
   }
 }
