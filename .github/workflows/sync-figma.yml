@@ -1,0 +1,37 @@
+name: Sync Prompts from Figma
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Every hour
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: pip install requests
+      
+      - name: Import from Figma
+        env:
+          FIGMA_API_TOKEN: ${{ secrets.FIGMA_API_TOKEN }}
+          FIGMA_FILE_ID: ${{ secrets.FIGMA_FILE_ID }}
+        run: |
+          python3 scripts/figma_importer.py "$FIGMA_API_TOKEN" "$FIGMA_FILE_ID" ./prompts
+      
+      - name: Validate Prompts
+        run: python3 scripts/validate_all.py ./prompts || true
+      
+      - name: Commit and Push
+        run: |
+          git config user.name "figma-bot"
+          git config user.email "bot@figma.local"
+          git add prompts/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 chore: Sync prompts from Figma" && git push)
