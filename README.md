@@ -271,3 +271,38 @@ Use these fixtures to test the importer without real Figma data:
 ```bash
 python3 scripts/figma_importer.py --fixture evals/cases/figma_prompt_example_v1.json
 ```
+
+## 🤖 MCP Server Integration
+
+Hermes includes a Model Context Protocol (MCP) server for integration with MCP clients like Claude Desktop, Cursor, and other AI assistants.
+
+### Available Tools
+
+- **list_prompts** — Enumerate all prompts in `prompts/raw/`
+- **validate_prompt** — Validate a specific prompt against schema
+- **get_prompt_stats** — Get collection statistics (strategies, categories, validity)
+
+### Quick Setup
+
+```bash
+# Copy config to Claude Desktop
+mkdir -p ~/.config/Claude/
+cp mcp/claude_desktop_config.json ~/.config/Claude/claude_desktop_config.json
+
+# Edit config with absolute path to your installation
+# Restart Claude Desktop
+```
+
+### Usage
+
+```bash
+# Test from CLI
+python3 mcp/server.py list
+python3 mcp/server.py validate --filename prompt-1.json
+python3 mcp/server.py stats
+
+# In Claude Desktop: "List my prompts" or "Validate prompt-1.json"
+```
+
+See [mcp/README.md](mcp/README.md) for detailed documentation.
+

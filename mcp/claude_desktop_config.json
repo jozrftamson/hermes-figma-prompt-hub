@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "hermes": {
+      "command": "python3",
+      "args": [
+        "/path/to/hermes-figma-prompt-hub/mcp/server.py"
+      ],
+      "env": {
+        "PYTHONPATH": "/path/to/hermes-figma-prompt-hub/scripts"
+      }
+    }
+  }
+}
