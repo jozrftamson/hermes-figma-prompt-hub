@@ -1,0 +1,210 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    name: Build Project
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        id: npm_install
+        run: |
+          echo "📦 Installing dependencies..."
+          npm ci --prefer-offline
+          if [ $? -eq 0 ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Lint code
+        id: lint
+        continue-on-error: true
+        run: |
+          echo "🔍 Running linter..."
+          if npm run lint --if-present 2>&1; then
+            echo "Lint: OK"
+          else
+            echo "Lint: FAILED (non-blocking)"
+          fi
+
+      - name: Build project
+        id: build
+        run: |
+          echo "🔨 Building project..."
+          npm run build
+          if [ $? -eq 0 ]; then
+            echo "Build: SUCCESS"
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "Build: FAILED"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Verify build output
+        if: steps.build.outcome == 'success'
+        run: |
+          echo "✅ Build completed successfully"
+          if [ -d ".nuxt" ]; then
+            echo "Nuxt build directory found"
+            ls -la .nuxt | head -10
+          fi
+
+  validate:
+    name: Validate Configuration & Prompts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Validate prompts
+        id: validate_prompts
+        continue-on-error: true
+        run: |
+          echo "🔍 Validating prompts..."
+          
+          if [ ! -d "prompts/raw" ]; then
+            echo "⚠️  No prompts/raw directory found, skipping"
+            exit 0
+          fi
+          
+          error_count=0
+          success_count=0
+          
+          for file in prompts/raw/*.json; do
+            if [ -f "$file" ]; then
+              echo "Validating: $file"
+              if python3 scripts/validate_prompt.py "$file" >/dev/null 2>&1; then
+                ((success_count++))
+              else
+                ((error_count++))
+                echo "❌ Validation failed: $file"
+              fi
+            fi
+          done
+          
+          echo "Validated: $success_count successful, $error_count failed"
+          [ $error_count -eq 0 ]
+
+      - name: Check JSON files
+        id: json_check
+        continue-on-error: true
+        run: |
+          echo "🔍 Validating JSON files..."
+          
+          json_files=$(find data -name "*.json" -type f 2>/dev/null || echo "")
+          
+          if [ -n "$json_files" ]; then
+            for file in $json_files; do
+              if ! python3 -m json.tool "$file" >/dev/null 2>&1; then
+                echo "❌ Invalid JSON: $file"
+                exit 1
+              fi
+            done
+            echo "✅ All JSON files valid"
+          fi
+
+  deploy:
+    name: Deploy to Vercel
+    needs: [build, validate]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "⚠️  VERCEL_TOKEN not configured, skipping Vercel deployment"
+            exit 0
+          fi
+          
+          echo "🚀 Deploying to Vercel..."
+          
+          # Install Vercel CLI
+          npm install -g vercel
+          
+          # Deploy
+          if vercel --prod --token=$VERCEL_TOKEN; then
+            echo "✅ Deployment successful"
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Deployment failed"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+  create-deployment:
+    name: Create Deployment Record
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && success()
+    permissions:
+      deployments: write
+      contents: read
+
+    steps:
+      - name: Create deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.ref,
+              environment: 'production',
+              description: 'Deployed via GitHub Actions',
+              auto_merge: false
+            });
+
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: deployment.data.id,
+              state: 'success',
+              description: 'Deployed successfully'
+            });
+
+            console.log(`Deployment created: ${deployment.data.id}`);

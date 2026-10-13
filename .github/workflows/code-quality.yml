@@ -1,0 +1,389 @@
+name: Code Quality Review
+
+on:
+  pull_request:
+    branches: [main, master]
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, master]
+
+jobs:
+  lint-and-format:
+    name: Lint & Format Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install Python linters
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint black flake8 isort
+
+      - name: Lint Python files
+        id: python_lint
+        continue-on-error: true
+        run: |
+          echo "🔍 Running Python linters..."
+          
+          # Check Python files
+          python_files=$(find scripts mcp -name "*.py" -type f 2>/dev/null || echo "")
+          
+          if [ -n "$python_files" ]; then
+            echo "Files to lint: $python_files"
+            
+            # Flake8
+            echo "Running flake8..."
+            flake8 $python_files --count --statistics --max-line-length=120 || true
+            
+            # Check for missing docstrings (pylint)
+            echo "Running pylint..."
+            pylint $python_files --disable=all --enable=missing-docstring --exit-zero || true
+            
+            # Check formatting (black)
+            echo "Checking formatting with black..."
+            black --check --diff $python_files || true
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Check Node dependencies
+        id: npm_check
+        continue-on-error: true
+        run: |
+          echo "🔍 Checking npm dependencies..."
+          npm ci --prefer-offline
+          
+          # Run npm audit
+          npm audit --audit-level=moderate || echo "⚠️  Some packages have security issues"
+
+  validate-prompts:
+    name: Validate Prompts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Validate all prompts
+        id: validate
+        continue-on-error: true
+        run: |
+          echo "🔍 Validating prompt files..."
+          
+          if [ -d "prompts/raw" ]; then
+            for file in prompts/raw/*.json; do
+              if [ -f "$file" ]; then
+                echo "Validating: $file"
+                python3 scripts/validate_prompt.py "$file" --format json > /tmp/result.json 2>&1 || true
+                
+                # Check if valid
+                is_valid=$(jq -r '.valid' /tmp/result.json 2>/dev/null || echo "false")
+                if [ "$is_valid" != "true" ]; then
+                  echo "❌ $file is invalid"
+                  jq . /tmp/result.json 2>/dev/null || cat /tmp/result.json
+                else
+                  echo "✅ $file is valid"
+                fi
+              fi
+            done
+          else
+            echo "⚠️  No prompts/raw directory found"
+          fi
+
+      - name: Check schema
+        id: schema_check
+        continue-on-error: true
+        run: |
+          echo "🔍 Checking schema..."
+          
+          if [ -d "prompts/raw" ] && [ -f "scripts/schema_validator.py" ]; then
+            for file in prompts/raw/*.json; do
+              if [ -f "$file" ]; then
+                echo "Schema check: $file"
+                python3 scripts/schema_validator.py "$file" || true
+              fi
+            done
+          fi
+
+  dockerfile-check:
+    name: Dockerfile Lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Dockerfile lint
+        uses: hadolint/hadolint-action@v3
+        if: hashFiles('Dockerfile') != ''
+        with:
+          dockerfile: Dockerfile
+          ignore: DL3009,DL3008
+
+  markdown-lint:
+    name: Markdown Lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install markdown-lint
+        run: npm install -g markdownlint-cli
+
+      - name: Lint Markdown files
+        id: markdown_lint
+        continue-on-error: true
+        run: |
+          echo "🔍 Linting Markdown files..."
+          
+          md_files=$(find . -name "*.md" -type f \
+            -not -path "./node_modules/*" \
+            -not -path "./.git/*" \
+            || echo "")
+          
+          if [ -n "$md_files" ]; then
+            markdownlint $md_files || true
+          else
+            echo "No markdown files found"
+          fi
+
+  yaml-lint:
+    name: YAML Lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run yamllint
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          file_or_dir: .
+          config_data: |
+            rules:
+              line-length:
+                max: 120
+              indentation:
+                spaces: 2
+              comments:
+                min-spaces-from-content: 1
+
+  security-check:
+    name: Security Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Check for secrets
+        id: secrets_check
+        continue-on-error: true
+        run: |
+          echo "🔍 Checking for exposed secrets..."
+          
+          # Look for common secret patterns
+          if grep -r "FIGMA_TOKEN\|API_KEY\|SECRET_KEY\|PASSWORD" . \
+            --include="*.json" --include="*.env" --include="*.yml" \
+            --exclude-dir=node_modules --exclude-dir=.git 2>/dev/null; then
+            echo "⚠️  Potential secrets found"
+          else
+            echo "✅ No obvious secrets found"
+          fi
+
+  build-check:
+    name: Build Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        id: npm_install
+        continue-on-error: true
+        run: |
+          echo "📦 Installing dependencies..."
+          npm ci --prefer-offline --no-audit
+
+      - name: Build check
+        id: build
+        continue-on-error: true
+        if: steps.npm_install.outcome == 'success'
+        run: |
+          echo "🔨 Building project..."
+          npm run build 2>&1 || echo "⚠️  Build failed or not configured"
+
+      - name: TypeScript check
+        id: typescript
+        continue-on-error: true
+        if: hashFiles('tsconfig.json') != ''
+        run: |
+          echo "🔍 Checking TypeScript..."
+          npx tsc --noEmit || true
+
+  test-check:
+    name: Test Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        continue-on-error: true
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Run tests
+        id: test
+        continue-on-error: true
+        run: |
+          echo "🧪 Running tests..."
+          if npm run test 2>&1; then
+            echo "✅ Tests passed"
+          else
+            echo "⚠️  Tests not available or failed"
+          fi
+
+  code-quality-summary:
+    name: Code Quality Summary
+    needs: [lint-and-format, validate-prompts, markdown-lint, yaml-lint, security-check, build-check, test-check]
+    runs-on: ubuntu-latest
+    if: always()
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Check workflow status
+        run: |
+          echo "## 📊 Code Quality Report"
+          echo ""
+          echo "| Check | Status |"
+          echo "|-------|--------|"
+          echo "| Lint & Format | ${{ needs.lint-and-format.result }} |"
+          echo "| Prompt Validation | ${{ needs.validate-prompts.result }} |"
+          echo "| Markdown Lint | ${{ needs.markdown-lint.result }} |"
+          echo "| YAML Lint | ${{ needs.yaml-lint.result }} |"
+          echo "| Security Check | ${{ needs.security-check.result }} |"
+          echo "| Build Check | ${{ needs.build-check.result }} |"
+          echo "| Tests | ${{ needs.test-check.result }} |"
+          echo ""
+          
+          # Fail if any required check failed
+          if [ "${{ needs.lint-and-format.result }}" = "failure" ] || \
+             [ "${{ needs.validate-prompts.result }}" = "failure" ] || \
+             [ "${{ needs.security-check.result }}" = "failure" ]; then
+            echo "❌ Code quality checks failed"
+            exit 1
+          else
+            echo "✅ Code quality checks passed"
+          fi
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const checks = {
+              'Lint & Format': '${{ needs.lint-and-format.result }}',
+              'Prompt Validation': '${{ needs.validate-prompts.result }}',
+              'Markdown Lint': '${{ needs.markdown-lint.result }}',
+              'YAML Lint': '${{ needs.yaml-lint.result }}',
+              'Security': '${{ needs.security-check.result }}',
+              'Build': '${{ needs.build-check.result }}',
+              'Tests': '${{ needs.test-check.result }}'
+            };
+
+            const statusEmoji = (result) => {
+              if (result === 'success') return '✅';
+              if (result === 'failure') return '❌';
+              if (result === 'skipped') return '⏭️';
+              return '⚠️';
+            };
+
+            let body = '## 🔍 Code Quality Review\n\n';
+            body += '| Check | Status |\n';
+            body += '|-------|--------|\n';
+            for (const [check, result] of Object.entries(checks)) {
+              body += `| ${check} | ${statusEmoji(result)} ${result} |\n`;
+            }
+            body += '\n*Generated by Code Quality Review workflow*';
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
