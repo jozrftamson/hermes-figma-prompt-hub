@@ -233,3 +233,41 @@ MIT © 2025 Hermes Figma Prompt Hub
 ---
 
 **Built with ❤️ for prompt engineers and design systems teams**
+
+## 📋 Figma Layer Contract
+
+The importer expects Figma PROMPT frames with the following layer structure:
+
+```
+PROMPT/example-v1
+├── METADATA (group)
+│   ├── title (text)
+│   ├── description (text)
+│   ├── category (text)
+│   ├── strategy (text)
+│   └── version (text)
+├── CONTENT (group)
+│   ├── system (text)
+│   ├── user_template (text)
+│   ├── guardrails (text)
+│   └── output_format (text)
+├── EXAMPLES (group)
+│   └── example_N (frame)
+│       ├── input (text)
+│       ├── output (text)
+│       └── explanation (text)
+└── STRATEGY_CONFIG (group)
+    ├── num_steps (text)
+    └── step_structure (text)
+```
+
+### Test Fixtures
+
+Example test fixtures are available in `evals/cases/`:
+- `figma_prompt_example_v1.json` — Complete Figma PROMPT frame fixture
+
+Use these fixtures to test the importer without real Figma data:
+
+```bash
+python3 scripts/figma_importer.py --fixture evals/cases/figma_prompt_example_v1.json
+```

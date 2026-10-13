@@ -1,0 +1,133 @@
+{
+  "name": "PROMPT/example-v1",
+  "type": "FRAME",
+  "id": "123:456",
+  "children": [
+    {
+      "name": "METADATA",
+      "type": "GROUP",
+      "id": "123:457",
+      "children": [
+        {
+          "name": "title",
+          "type": "TEXT",
+          "id": "123:458",
+          "characters": "Example Prompt"
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "id": "123:459",
+          "characters": "An example prompt for testing the Figma importer"
+        },
+        {
+          "name": "category",
+          "type": "TEXT",
+          "id": "123:460",
+          "characters": "analysis"
+        },
+        {
+          "name": "strategy",
+          "type": "TEXT",
+          "id": "123:461",
+          "characters": "chain-of-thought"
+        },
+        {
+          "name": "version",
+          "type": "TEXT",
+          "id": "123:462",
+          "characters": "v1"
+        }
+      ]
+    },
+    {
+      "name": "CONTENT",
+      "type": "GROUP",
+      "id": "123:463",
+      "children": [
+        {
+          "name": "system",
+          "type": "TEXT",
+          "id": "123:464",
+          "characters": "You are a helpful AI assistant that thinks step-by-step."
+        },
+        {
+          "name": "user_template",
+          "type": "TEXT",
+          "id": "123:465",
+          "characters": "Please analyze this problem in 5 steps: {{problem}}"
+        },
+        {
+          "name": "guardrails",
+          "type": "TEXT",
+          "id": "123:466",
+          "characters": "Be objective\nUse data, not assumptions\nValidate each step"
+        },
+        {
+          "name": "output_format",
+          "type": "TEXT",
+          "id": "123:467",
+          "characters": "Numbered steps with reasoning"
+        }
+      ]
+    },
+    {
+      "name": "EXAMPLES",
+      "type": "GROUP",
+      "id": "123:468",
+      "children": [
+        {
+          "name": "example_1",
+          "type": "FRAME",
+          "id": "123:469",
+          "children": [
+            {
+              "name": "input",
+              "type": "TEXT",
+              "id": "123:470",
+              "characters": "Why do users churn from SaaS products?"
+            },
+            {
+              "name": "output",
+              "type": "TEXT",
+              "id": "123:471",
+              "characters": "1. Collect usage data\n2. Identify drop-off patterns\n3. Segment by cohort\n4. Analyze feature adoption\n5. Recommend improvements"
+            },
+            {
+              "name": "explanation",
+              "type": "TEXT",
+              "id": "123:472",
+              "characters": "Systematic approach to identifying churn drivers"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "STRATEGY_CONFIG",
+      "type": "GROUP",
+      "id": "123:473",
+      "children": [
+        {
+          "name": "num_steps",
+          "type": "TEXT",
+          "id": "123:474",
+          "characters": "5"
+        },
+        {
+          "name": "step_structure",
+          "type": "TEXT",
+          "id": "123:475",
+          "characters": "numbered_with_reasoning"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "created_at": "2026-07-12T00:00:00Z",
+    "description": "Test fixture representing a Figma PROMPT frame for importer testing",
+    "purpose": "Testing Figma layer contract compliance and frame extraction",
+    "no_private_data": true,
+    "no_real_figma_token": true
+  }
+}
