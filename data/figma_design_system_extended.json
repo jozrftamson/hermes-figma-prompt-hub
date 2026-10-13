@@ -1,0 +1,1186 @@
+{
+  "figma_design_system_extended": {
+    "version": "2.0.0",
+    "project": "hermes-figma-prompt-hub-extended",
+    "timestamp": "2025-01-16",
+
+    "prompt_strategy_framework": {
+      "description": "Detaillierte Mapping von Design-Elementen zu Prompt-Strategien mit Kontexten",
+      "strategies": {
+        "chain_of_thought": {
+          "id": "cot_v1",
+          "name": "Chain of Thought",
+          "category": "reasoning",
+          "description": "Strukturiertes Schritt-für-Schritt Reasoning",
+          "design_triggers": {
+            "primary_buttons": "user_initiates_complex_action",
+            "multi_step_forms": "sequential_decision_making",
+            "progress_indicators": "step_tracking_needed"
+          },
+          "prompt_template": {
+            "system": "Du bist ein hilfreicher Assistant, der Probleme methodisch Schritt für Schritt löst.",
+            "instruction": "Bitte löse diese Aufgabe in 4-6 klaren, nummerierten Schritten.",
+            "output_format": {
+              "structure": "numbered_steps",
+              "step_template": "{{number}}. {{action}}: {{reasoning}}"
+            }
+          },
+          "context_variables": {
+            "problem_complexity": "low | medium | high",
+            "domain": "technical | business | creative",
+            "user_expertise": "beginner | intermediate | expert"
+          },
+          "guardrails": [
+            "Jeder Schritt muss selbstständig verständlich sein",
+            "Verwende konkrete Beispiele für komplexe Konzepte",
+            "Validiere nach jedem Schritt die Logik"
+          ],
+          "examples": [
+            {
+              "input": "Wie strukturiere ich eine REST API?",
+              "output": "1. Ressourcen definieren: Identifiziere alle Entitäten (Users, Posts, Comments)\n2. Endpoints planen: GET, POST, PUT, DELETE für jede Ressource\n3. Datenmodell: Definiere Beziehungen zwischen Ressourcen\n4. Error Handling: Plane Status-Codes für jeden Fall\n5. Dokumentation: Erstelle API-Spezifikation\n6. Implementierung: Starte mit dem MVP"
+            }
+          ],
+          "effectiveness_metrics": {
+            "clarity_score": 0.92,
+            "completeness_score": 0.88,
+            "user_satisfaction": 0.85,
+            "context_efficiency": "3000_tokens_avg"
+          },
+          "use_cases": [
+            "problem_solving",
+            "code_generation",
+            "decision_making",
+            "analysis",
+            "planning"
+          ]
+        },
+
+        "few_shot_learning": {
+          "id": "few_shot_v1",
+          "name": "Few-Shot Learning",
+          "category": "demonstration",
+          "description": "Lernen durch 2-5 Beispiele vor der Hauptaufgabe",
+          "design_triggers": {
+            "example_cards": "pattern_recognition",
+            "table_data": "format_consistency",
+            "list_items": "style_matching"
+          },
+          "prompt_template": {
+            "system": "Du bist ein Pattern-Erkennungs-Expert.",
+            "instruction": "Hier sind {{num_examples}} Beispiele. Wende das Muster auf die neue Aufgabe an:",
+            "structure": {
+              "example_1": "Input: {{example_1_input}} → Output: {{example_1_output}}",
+              "example_2": "Input: {{example_2_input}} → Output: {{example_2_output}}",
+              "example_3": "Input: {{example_3_input}} → Output: {{example_3_output}}",
+              "your_task": "Input: {{user_input}} → Output: ?"
+            }
+          },
+          "context_variables": {
+            "num_examples": "2 | 3 | 5",
+            "similarity_to_main_task": "high | medium | low",
+            "domain": "code | content | data | design"
+          },
+          "guardrails": [
+            "Wähle Beispiele, die dem Ziel-Pattern ähneln",
+            "Variiere Schwierigkeit der Beispiele progressiv",
+            "Erkläre implizite Regeln zwischen Beispielen nicht",
+            "Nutze 3-5 Beispiele, nicht mehr"
+          ],
+          "examples": [
+            {
+              "task": "Code-Style Konsistenz",
+              "example_1": "function getName() { return 'John'; } → const getName = () => 'John';",
+              "example_2": "function getAge() { return 25; } → const getAge = () => 25;",
+              "example_3": "function getEmail() { return 'john@example.com'; } → const getEmail = () => 'john@example.com';",
+              "user_input": "function getPhone() { return '555-1234'; }",
+              "expected_output": "const getPhone = () => '555-1234';"
+            }
+          ],
+          "effectiveness_metrics": {
+            "pattern_accuracy": 0.91,
+            "consistency_score": 0.89,
+            "context_efficiency": "2500_tokens_avg"
+          },
+          "use_cases": [
+            "format_consistency",
+            "style_matching",
+            "pattern_recognition",
+            "code_generation",
+            "content_creation"
+          ]
+        },
+
+        "role_play_persona": {
+          "id": "role_play_v1",
+          "name": "Role Play / Persona",
+          "category": "behavioral",
+          "description": "LLM agiert als spezifische Rolle mit Expertise",
+          "design_triggers": {
+            "help_icons": "expert_consultation",
+            "sidebar_panels": "role_based_advice",
+            "chat_interface": "conversational_expert"
+          },
+          "prompt_template": {
+            "system": "Du bist {{role}} mit {{years}} Jahren Erfahrung in {{domain}}.",
+            "personality": "{{personality_traits}}",
+            "communication_style": "{{style_description}}",
+            "expertise": "{{expertise_areas}}"
+          },
+          "roles": {
+            "senior_engineer": {
+              "expertise_areas": ["system_design", "architecture", "performance", "security"],
+              "personality": "pragmatic, experienced, solutions-focused",
+              "communication_style": "direct, technical, efficient"
+            },
+            "product_manager": {
+              "expertise_areas": ["strategy", "user_needs", "prioritization", "roadmap"],
+              "personality": "strategic, user-centric, collaborative",
+              "communication_style": "clear, stakeholder-focused"
+            },
+            "ux_designer": {
+              "expertise_areas": ["user_experience", "accessibility", "visual_design", "user_research"],
+              "personality": "empathetic, detail-oriented, user-focused",
+              "communication_style": "visual, accessible, user-centric"
+            },
+            "security_expert": {
+              "expertise_areas": ["threat_modeling", "compliance", "encryption", "authentication"],
+              "personality": "thorough, risk-aware, proactive",
+              "communication_style": "systematic, compliance-focused"
+            }
+          },
+          "guardrails": [
+            "Bleibe konsistent in der Rolle",
+            "Nutze domain-spezifisches Vokabular",
+            "Gebe Ratschläge aus der Perspektive dieser Rolle",
+            "Erkenne Grenzen der Expertise an"
+          ],
+          "examples": [
+            {
+              "role": "Senior Engineer",
+              "question": "Wie strukturiere ich eine Microservices-Architektur?",
+              "response": "Basierend auf meinen 15 Jahren: (1) Definiere klare Service-Grenzen nach Business-Domains, (2) Implementiere Service-Discovery, (3) Nutze Message Queues für async Kommunikation, (4) Plane für distributed tracing und logging von Anfang an..."
+            }
+          ],
+          "effectiveness_metrics": {
+            "credibility_score": 0.88,
+            "relevance_score": 0.85,
+            "trust_score": 0.87
+          }
+        },
+
+        "tree_of_thought": {
+          "id": "tot_v1",
+          "name": "Tree of Thought",
+          "category": "advanced_reasoning",
+          "description": "Mehrere parallele Lösungswege erkunden",
+          "design_triggers": {
+            "decision_modals": "multiple_choice_paths",
+            "comparison_tables": "option_analysis",
+            "branching_flows": "alternative_paths"
+          },
+          "prompt_template": {
+            "system": "Du bist ein strategischer Denker, der mehrere Optionen parallel evaluiert.",
+            "instruction": "Erkunde {{num_branches}} verschiedene Ansätze für dieses Problem.",
+            "structure": {
+              "branch_a": "Approach A (Vorteile/Nachteile/Risiken)",
+              "branch_b": "Approach B (Vorteile/Nachteile/Risiken)",
+              "branch_c": "Approach C (Vorteile/Nachteile/Risiken)",
+              "evaluation": "Vergleich & beste Wahl mit Begründung"
+            }
+          },
+          "context_variables": {
+            "num_branches": "2 | 3 | 4",
+            "complexity": "low | medium | high",
+            "decision_priority": "speed | quality | cost | flexibility"
+          },
+          "guardrails": [
+            "Sei fair in der Bewertung aller Wege",
+            "Erkenne Trade-offs explizit an",
+            "Begründe die finale Empfehlung",
+            "Erkenne Kontextabhängigkeit an"
+          ],
+          "examples": [
+            {
+              "problem": "Datenbankwahl für neues Projekt",
+              "branch_a": "PostgreSQL: ACID, structured data, proven, but vertical scaling limits",
+              "branch_b": "MongoDB: horizontal scaling, flexible schema, but consistency concerns",
+              "branch_c": "DynamoDB: managed, serverless, but vendor lock-in",
+              "recommendation": "PostgreSQL für structured financial data mit ACID requirements"
+            }
+          ],
+          "effectiveness_metrics": {
+            "decision_quality": 0.90,
+            "option_coverage": 0.88,
+            "reasoning_depth": 0.92
+          }
+        },
+
+        "meta_reasoning": {
+          "id": "meta_v1",
+          "name": "Meta-Reasoning",
+          "category": "self_reflection",
+          "description": "Model reflektiert über eigene Reasoning-Qualität",
+          "design_triggers": {
+            "loading_states": "internal_validation",
+            "result_panels": "self_check",
+            "error_messages": "quality_assessment"
+          },
+          "prompt_template": {
+            "system": "Du bist eine reflektierende KI, die ihre Antworten validiert.",
+            "instruction": "Nach deiner Antwort: Überprüfe sie auf Vollständigkeit, Genauigkeit und Klarheit.",
+            "validation_checklist": [
+              "Habe ich alle Teile der Frage beantwortet?",
+              "Sind meine Fakten korrekt?",
+              "Ist die Erklärung verständlich?",
+              "Habe ich wichtige Edge-Cases übersehen?",
+              "Kann ich das besser formulieren?"
+            ]
+          },
+          "output_format": {
+            "original_answer": "{{answer}}",
+            "validation": {
+              "completeness": "{{score}}/10 - {{explanation}}",
+              "accuracy": "{{score}}/10 - {{explanation}}",
+              "clarity": "{{score}}/10 - {{explanation}}"
+            },
+            "improvements": "{{revised_answer_if_needed}}"
+          },
+          "guardrails": [
+            "Sei ehrlich über Unsicherheiten",
+            "Erkenne Limitations der Antwort an",
+            "Verbesserungen sollten konstruktiv sein",
+            "Nicht selbst-korrigierend, sondern reflektierend"
+          ]
+        }
+      },
+
+      "strategy_combinations": {
+        "cot_few_shot": {
+          "id": "combo_cot_fs_v1",
+          "name": "Chain of Thought + Few-Shot",
+          "strategies": ["cot_v1", "few_shot_v1"],
+          "when_to_use": "complex tasks requiring both reasoning AND pattern matching",
+          "prompt_structure": {
+            "step_1": "Hier sind 3 Beispiele des gewünschten Outputs:",
+            "step_2": "Erkenne das Pattern:",
+            "step_3": "Löse nun diese Aufgabe Schritt für Schritt:",
+            "step_4": "Output nach dem erkannten Pattern:"
+          },
+          "effectiveness": 0.93,
+          "best_for": ["code_generation", "content_creation", "data_transformation"]
+        },
+
+        "role_play_cot": {
+          "id": "combo_role_cot_v1",
+          "name": "Role Play + Chain of Thought",
+          "strategies": ["role_play_v1", "cot_v1"],
+          "when_to_use": "need expert advice delivered step-by-step",
+          "prompt_structure": {
+            "system": "Du bist {{role}} mit {{expertise}}",
+            "instruction": "Löse dieses Problem in klaren, professionellen Schritten:"
+          },
+          "effectiveness": 0.89,
+          "best_for": ["consulting", "mentoring", "expert_advice"]
+        },
+
+        "tree_meta": {
+          "id": "combo_tot_meta_v1",
+          "name": "Tree of Thought + Meta-Reasoning",
+          "strategies": ["tot_v1", "meta_v1"],
+          "when_to_use": "critical decisions requiring multiple perspectives AND self-validation",
+          "prompt_structure": {
+            "step_1": "Erkunde 3 verschiedene Ansätze:",
+            "step_2": "Vergleiche diese auf Qualität:",
+            "step_3": "Überprüfe deine Analyse selbst:",
+            "step_4": "Final Empfehlung mit Selbstbewertung:"
+          },
+          "effectiveness": 0.91,
+          "best_for": ["architecture_decisions", "strategic_planning", "risk_assessment"]
+        }
+      }
+    },
+
+    "extended_user_flows": {
+      "detailed_flows": [
+        {
+          "id": "flow_design_prompt_from_figma",
+          "name": "Design Prompt in Figma → Export → Validate",
+          "complexity": "high",
+          "duration_minutes": "15-30",
+          "actor": "design_lead_or_prompt_engineer",
+          "pre_conditions": [
+            "Figma file open",
+            "PROMPT/* layer structure understood",
+            "Hermes prompt schema known"
+          ],
+          "steps": [
+            {
+              "step_num": 1,
+              "screen": "Figma Canvas",
+              "action": "Select frame named PROMPT/cot-analysis-v2",
+              "interaction": {
+                "element": "Frame",
+                "type": "click_to_select",
+                "visual_feedback": "frame_highlighted"
+              },
+              "output": "Frame selected, properties panel shows metadata",
+              "prompt_context": "User is starting a design workflow. Be clear and guide step by step."
+            },
+            {
+              "step_num": 2,
+              "screen": "Properties Panel (Right Sidebar)",
+              "action": "Fill prompt metadata: title, description, strategy",
+              "fields": [
+                {
+                  "name": "Prompt Title",
+                  "type": "text_input",
+                  "placeholder": "e.g., CoT Analysis v2",
+                  "validation": "not_empty, max_100_chars"
+                },
+                {
+                  "name": "Category",
+                  "type": "dropdown",
+                  "options": ["analysis", "generation", "reasoning", "classification"]
+                },
+                {
+                  "name": "Strategy",
+                  "type": "dropdown",
+                  "options": ["chain-of-thought", "few-shot", "role-play", "tree-of-thought"]
+                },
+                {
+                  "name": "Description",
+                  "type": "textarea",
+                  "placeholder": "What does this prompt do?",
+                  "validation": "max_500_chars"
+                }
+              ],
+              "interaction": {
+                "type": "fill_form",
+                "visual_feedback": "field_highlight_on_focus"
+              },
+              "output": "Metadata entered and saved",
+              "prompt_context": "User is filling detailed information. Validate each field for accuracy."
+            },
+            {
+              "step_num": 3,
+              "screen": "Figma Canvas + Content Frames",
+              "action": "Add content layers: system_prompt, user_template, guardrails",
+              "sub_steps": [
+                {
+                  "sub": "3.1",
+                  "action": "Create frame: CONTENT/system",
+                  "type": "text_frame",
+                  "content_type": "system_message"
+                },
+                {
+                  "sub": "3.2",
+                  "action": "Create frame: CONTENT/user_template",
+                  "type": "text_frame",
+                  "content_type": "user_prompt_template"
+                },
+                {
+                  "sub": "3.3",
+                  "action": "Create frame: CONTENT/guardrails",
+                  "type": "list_frame",
+                  "content_type": "constraint_list"
+                }
+              ],
+              "interaction": {
+                "type": "drag_drop_and_fill",
+                "visual_feedback": "frame_outline_blue"
+              },
+              "prompt_context": "User is structuring the prompt content. Each section needs clear validation rules."
+            },
+            {
+              "step_num": 4,
+              "screen": "Plugin Modal: Export to JSON",
+              "action": "Run export plugin",
+              "interaction": {
+                "element": "Button (Primary)",
+                "type": "click",
+                "label": "Export Prompt JSON"
+              },
+              "output": "JSON generated and shown in modal",
+              "output_format": {
+                "prompt_id": "cot-analysis-v2",
+                "system": "{{system_content}}",
+                "user_template": "{{user_template_content}}",
+                "guardrails": ["{{guardrail_1}}", "{{guardrail_2}}"],
+                "metadata": {
+                  "created": "2025-01-16T10:30:00Z",
+                  "version": "1.0",
+                  "strategy": "chain-of-thought"
+                }
+              },
+              "prompt_context": "System has processed design input into structured data. Show clear validation results."
+            },
+            {
+              "step_num": 5,
+              "screen": "Validation Results Panel",
+              "action": "Run validation checks",
+              "checks": [
+                {
+                  "check": "Schema Validation",
+                  "status": "pass | fail",
+                  "message": "{{validation_message}}"
+                },
+                {
+                  "check": "Required Fields",
+                  "status": "pass | fail",
+                  "fields_checked": ["system", "user_template", "strategy"]
+                },
+                {
+                  "check": "Content Quality",
+                  "status": "pass | fail",
+                  "metrics": {
+                    "clarity_score": 0.85,
+                    "completeness_score": 0.92,
+                    "specificity_score": 0.78
+                  }
+                },
+                {
+                  "check": "Token Estimation",
+                  "status": "info",
+                  "estimated_tokens": 2847,
+                  "recommendation": "Good for standard models"
+                }
+              ],
+              "output": "Validation report displayed",
+              "prompt_context": "User sees validation results. Be encouraging but honest about any issues."
+            },
+            {
+              "step_num": 6,
+              "screen": "Copy & Save Options",
+              "action": "Choose export destination",
+              "options": [
+                {
+                  "option": "Copy to Clipboard",
+                  "action": "copy_json",
+                  "visual": "copy_icon_animation"
+                },
+                {
+                  "option": "Download as JSON File",
+                  "action": "download_json",
+                  "filename": "prompt_{{id}}_{{version}}.json"
+                },
+                {
+                  "option": "Push to Repository",
+                  "action": "git_push",
+                  "branch": "feature/prompt-{{id}}"
+                },
+                {
+                  "option": "Open in Editor",
+                  "action": "open_in_json_editor",
+                  "editor": "monaco_or_local"
+                }
+              ],
+              "interaction": {
+                "type": "button_group",
+                "visual": "highlighted_buttons"
+              },
+              "output": "File exported or clipboard filled",
+              "prompt_context": "User successfully completed export. Show success state and next steps."
+            }
+          ],
+          "success_criteria": [
+            "Prompt JSON is valid",
+            "All required fields populated",
+            "Schema matches hermes format",
+            "Quality metrics > 0.75"
+          ],
+          "error_scenarios": [
+            {
+              "error": "Missing system prompt",
+              "handling": "show_error_modal_highlight_field",
+              "prompt_instruction": "Guide user to fill the missing required field with an example."
+            },
+            {
+              "error": "Content too long (>5000 tokens)",
+              "handling": "show_warning_suggest_reduction",
+              "prompt_instruction": "Suggest specific sections to condense while maintaining clarity."
+            }
+          ]
+        },
+
+        {
+          "id": "flow_evaluate_with_multiple_cases",
+          "name": "Run Evaluation with Multiple Test Cases",
+          "complexity": "high",
+          "duration_minutes": "20-45",
+          "actor": "prompt_engineer_evaluator",
+          "steps": [
+            {
+              "step_num": 1,
+              "screen": "Prompt Detail Page",
+              "action": "Click Run Evaluation",
+              "interaction": {
+                "element": "Button (Secondary)",
+                "label": "Run Evaluation",
+                "icon": "play_icon"
+              },
+              "output": "Evaluation modal opens",
+              "prompt_context": "User is initiating an evaluation process. Be clear about the workflow."
+            },
+            {
+              "step_num": 2,
+              "screen": "Evaluation Setup Modal",
+              "action": "Select test cases",
+              "sub_steps": [
+                {
+                  "sub": "2.1",
+                  "action": "View available test cases",
+                  "display": "list_with_metadata",
+                  "metadata_fields": ["case_id", "description", "created_date", "last_run"],
+                  "visual": "card_layout"
+                },
+                {
+                  "sub": "2.2",
+                  "action": "Multi-select cases",
+                  "interaction": "checkbox_selection",
+                  "selection_limit": "max_10"
+                },
+                {
+                  "sub": "2.3",
+                  "action": "Filter cases",
+                  "filters": [
+                    {"name": "Category", "options": ["regression", "edge_cases", "happy_path"]},
+                    {"name": "Difficulty", "options": ["easy", "medium", "hard"]},
+                    {"name": "Last Run", "options": ["never", "1_week_ago", "1_month_ago"]}
+                  ]
+                }
+              ],
+              "output": "Selected cases highlighted",
+              "prompt_context": "User is selecting test cases. Show clear metadata to guide selection."
+            },
+            {
+              "step_num": 3,
+              "screen": "Model Selection",
+              "action": "Choose model(s) to test",
+              "options": [
+                {
+                  "model": "gpt-4",
+                  "cost_per_eval": "$0.12",
+                  "speed": "slow",
+                  "quality": "highest"
+                },
+                {
+                  "model": "gpt-3.5-turbo",
+                  "cost_per_eval": "$0.02",
+                  "speed": "fast",
+                  "quality": "high"
+                },
+                {
+                  "model": "hermes-3-llama",
+                  "cost_per_eval": "$0.00",
+                  "speed": "medium",
+                  "quality": "high",
+                  "note": "local"
+                }
+              ],
+              "multi_select": true,
+              "recommended": ["gpt-4", "hermes-3-llama"],
+              "output": "Models selected, cost estimated",
+              "prompt_context": "User is selecting which models to benchmark. Show transparent costs and trade-offs."
+            },
+            {
+              "step_num": 4,
+              "screen": "Evaluation Configuration",
+              "action": "Set evaluation parameters",
+              "parameters": [
+                {
+                  "param": "Temperature",
+                  "type": "slider",
+                  "range": "0.0 - 2.0",
+                  "default": 0.7,
+                  "description": "Randomness in responses"
+                },
+                {
+                  "param": "Max Tokens",
+                  "type": "input",
+                  "value": 2000,
+                  "description": "Max response length"
+                },
+                {
+                  "param": "Parallel Runs",
+                  "type": "input",
+                  "value": 3,
+                  "description": "Run each case N times for consistency"
+                },
+                {
+                  "param": "Timeout (seconds)",
+                  "type": "input",
+                  "value": 60
+                }
+              ],
+              "advanced_options": {
+                "compare_with_previous": true,
+                "baseline_version": "v1.0",
+                "save_intermediate_results": true
+              },
+              "output": "Configuration saved",
+              "prompt_context": "User is configuring advanced evaluation settings. Explain each option clearly."
+            },
+            {
+              "step_num": 5,
+              "screen": "Review & Confirm",
+              "action": "Review evaluation plan",
+              "display": {
+                "summary": "You will evaluate {{selected_cases}} cases with {{selected_models}} models",
+                "estimated_cost": "$2.47",
+                "estimated_time": "~8 minutes",
+                "models_table": true,
+                "cases_table": true
+              },
+              "cta": "Start Evaluation",
+              "cancel_option": true,
+              "output": "Confirmation or cancellation",
+              "prompt_context": "User is confirming the evaluation. Show all key information clearly."
+            },
+            {
+              "step_num": 6,
+              "screen": "Evaluation Running (Progress)",
+              "action": "Monitor evaluation progress",
+              "display": {
+                "progress_bar": "12/30 cases completed (40%)",
+                "current_task": "Evaluating case_cot_001 with gpt-4",
+                "time_elapsed": "3m 22s",
+                "time_remaining": "~5m",
+                "live_log": true,
+                "cancel_button": true
+              },
+              "streaming_updates": true,
+              "output": "Real-time progress updates",
+              "prompt_context": "System is processing evaluation. Keep user informed with real-time updates."
+            },
+            {
+              "step_num": 7,
+              "screen": "Evaluation Results Dashboard",
+              "action": "View comprehensive results",
+              "result_sections": [
+                {
+                  "section": "Summary Metrics",
+                  "metrics": [
+                    {
+                      "name": "Average Score",
+                      "value": "8.2/10",
+                      "breakdown": "gpt-4: 8.5, gpt-3.5: 8.0, hermes: 7.9"
+                    },
+                    {
+                      "name": "Consistency",
+                      "value": "0.87",
+                      "description": "Score variance across models"
+                    },
+                    {
+                      "name": "Quality Dimensions",
+                      "value": {
+                        "coherence": 0.89,
+                        "completeness": 0.91,
+                        "accuracy": 0.85,
+                        "relevance": 0.88
+                      }
+                    }
+                  ]
+                },
+                {
+                  "section": "Per-Model Breakdown",
+                  "display": "comparison_table",
+                  "columns": ["Model", "Avg Score", "Median", "Std Dev", "Best Case", "Worst Case"]
+                },
+                {
+                  "section": "Per-Case Breakdown",
+                  "display": "detailed_table",
+                  "columns": ["Case", "Model", "Score", "Output Preview", "Latency", "Tokens Used"],
+                  "sorting": "by_score_desc",
+                  "expandable_rows": true
+                },
+                {
+                  "section": "Detailed Output Comparison",
+                  "display": "side_by_side_comparison",
+                  "selected_case": "expandable",
+                  "show_differences": true
+                }
+              ],
+              "interactive_features": [
+                "filter_by_model",
+                "filter_by_case",
+                "sort_by_metric",
+                "export_results",
+                "download_csv"
+              ],
+              "output": "Full evaluation report displayed",
+              "prompt_context": "System presents comprehensive evaluation results. Help user interpret the data."
+            },
+            {
+              "step_num": 8,
+              "screen": "Post-Evaluation Actions",
+              "action": "Take next steps",
+              "options": [
+                {
+                  "action": "Save Results",
+                  "type": "save_evaluation_version",
+                  "creates": "evaluation_v1_timestamp"
+                },
+                {
+                  "action": "Export as PDF Report",
+                  "generates": "professional_report"
+                },
+                {
+                  "action": "Create GitHub Issue with Results",
+                  "integration": "github_api",
+                  "issue_template": "evaluation_results_issue"
+                },
+                {
+                  "action": "Update Prompt Based on Findings",
+                  "navigation": "go_to_prompt_edit"
+                },
+                {
+                  "action": "Compare with Previous Version",
+                  "shows": "side_by_side_eval_comparison"
+                }
+              ],
+              "output": "Action completed, feedback shown"
+            }
+          ],
+          "success_criteria": [
+            "All cases evaluated successfully",
+            "Results aggregated and displayed",
+            "Comparison metrics calculated",
+            "No model failures or timeouts"
+          ]
+        }
+      ]
+    },
+
+    "component_interaction_matrix": {
+      "description": "Detailliertes Mapping: Komponente → User-Aktion → Prompt-Strategie → Output",
+      "matrix": [
+        {
+          "component": "Button (Primary)",
+          "size": "md",
+          "color": "#2563EB",
+          "user_action": "click",
+          "interaction_state": "default → hover → active",
+          "triggered_flow": "execute_primary_action",
+          "prompt_trigger": {
+            "strategy": "chain_of_thought",
+            "context": "user_initiated_complex_task",
+            "instruction": "User clicked primary CTA. Provide clear, structured steps."
+          },
+          "visual_feedback": "shadow_elevation + color_darken",
+          "accessibility": {
+            "aria_label": "required",
+            "keyboard_navigation": "tab_focus_ring",
+            "screen_reader": "button_label_and_status"
+          }
+        },
+        {
+          "component": "Input Field (Text)",
+          "user_action": "focus",
+          "interaction_state": "default → focus → blur",
+          "triggered_flow": "user_data_entry",
+          "prompt_trigger": {
+            "strategy": "few_shot_learning",
+            "context": "user_entering_data",
+            "instruction": "User focused on input. Show contextual help and examples."
+          },
+          "visual_feedback": "blue_outline + helper_text_appear",
+          "helper_content": {
+            "placeholder": "e.g., chain-of-thought-analysis",
+            "hint": "Use lowercase and hyphens",
+            "examples": ["cot-analysis-v1", "few-shot-examples-v2"]
+          }
+        },
+        {
+          "component": "Card (Hoverable)",
+          "user_action": "hover",
+          "interaction_state": "default → hover",
+          "triggered_flow": "explore_option",
+          "prompt_trigger": {
+            "strategy": "few_shot_learning",
+            "context": "user_exploring_alternatives",
+            "instruction": "User is exploring options. Show examples of similar items."
+          },
+          "visual_feedback": "shadow_elevation + slight_lift",
+          "tooltip": {
+            "show_delay": "800ms",
+            "content": "{{card_title}}: {{card_description}}"
+          }
+        },
+        {
+          "component": "Modal Dialog",
+          "user_action": "open",
+          "interaction_state": "closed → opening_animation → open",
+          "triggered_flow": "focused_decision",
+          "prompt_trigger": {
+            "strategy": "tree_of_thought",
+            "context": "user_making_decision",
+            "instruction": "User is making a decision. Present multiple perspectives clearly."
+          },
+          "visual_feedback": "overlay_fade_in + modal_slide_up",
+          "keyboard_support": {
+            "escape_closes": true,
+            "tab_traps_focus": true
+          }
+        },
+        {
+          "component": "Dropdown / Select",
+          "user_action": "click_to_open",
+          "interaction_state": "closed → open → selected",
+          "triggered_flow": "select_option",
+          "prompt_trigger": {
+            "strategy": "few_shot_learning",
+            "context": "user_selecting_from_options",
+            "instruction": "User is selecting from predefined options. Show clear option differences."
+          },
+          "visual_feedback": "chevron_rotation + menu_slide_down"
+        },
+        {
+          "component": "Tab Navigation",
+          "user_action": "click_tab",
+          "interaction_state": "inactive_tab → active_tab",
+          "triggered_flow": "switch_context",
+          "prompt_trigger": {
+            "strategy": "role_play_persona",
+            "context": "context_switching",
+            "instruction": "User switched to a new section. Adapt your expertise to this domain."
+          },
+          "visual_feedback": "underline_animation + content_fade_transition"
+        },
+        {
+          "component": "Loading State (Spinner)",
+          "user_action": "wait",
+          "interaction_state": "processing",
+          "triggered_flow": "background_validation",
+          "prompt_trigger": {
+            "strategy": "meta_reasoning",
+            "context": "internal_processing",
+            "instruction": "System is processing. Validate your intermediate results internally."
+          },
+          "visual_feedback": "animated_spinner + status_text",
+          "messaging": "Processing your {{item_name}}...",
+          "max_display_time": "30_seconds",
+          "cancel_option": true
+        },
+        {
+          "component": "Error Message (Input Validation)",
+          "user_action": "submit_invalid_data",
+          "interaction_state": "error",
+          "triggered_flow": "error_recovery",
+          "prompt_trigger": {
+            "strategy": "role_play_persona",
+            "role": "helpful_expert",
+            "context": "user_needs_help",
+            "instruction": "User made an error. Guide them as a patient expert with solutions."
+          },
+          "visual_feedback": "red_border + shake_animation + error_message_appear",
+          "error_message": {
+            "problem": "What went wrong (technical)",
+            "reason": "Why it matters (user perspective)",
+            "solution": "How to fix it (actionable steps)"
+          }
+        }
+      ]
+    },
+
+    "evaluation_framework_extended": {
+      "quality_dimensions": {
+        "coherence": {
+          "id": "dim_coherence",
+          "name": "Coherence",
+          "description": "Logische Konsistenz und Flow der Antwort",
+          "scoring_rubric": {
+            "5": "Perfect logical flow, every sentence builds on previous, no contradictions",
+            "4": "Strong flow, minor logical jumps, mostly consistent",
+            "3": "Adequate flow, some logical gaps or mild contradictions",
+            "2": "Weak flow, significant logical jumps, some contradictions",
+            "1": "Poor or incoherent, many contradictions or random statements"
+          },
+          "prompt_check": "Does this response follow a clear logical structure? Are ideas connected?",
+          "weight": 0.15
+        },
+        "completeness": {
+          "id": "dim_completeness",
+          "name": "Completeness",
+          "description": "Beantwortet alle Teile der Frage",
+          "scoring_rubric": {
+            "5": "Fully answers all aspects of question, covers edge cases, proactive additions",
+            "4": "Addresses all main aspects, minor gaps in detail",
+            "3": "Addresses most aspects, some gaps in depth or secondary points",
+            "2": "Addresses some aspects, significant gaps or missing key points",
+            "1": "Answers only surface level or misses major parts"
+          },
+          "evaluation_criteria": [
+            "All questions addressed",
+            "All context consumed",
+            "Edge cases considered",
+            "Follow-up needs anticipated"
+          ],
+          "weight": 0.25
+        },
+        "accuracy": {
+          "id": "dim_accuracy",
+          "name": "Accuracy",
+          "description": "Factual Korrektheit und Aktualität",
+          "scoring_rubric": {
+            "5": "All facts accurate, current information, proper citations",
+            "4": "Mostly accurate, minor outdated info, few citation gaps",
+            "3": "Largely accurate, some old info, citation gaps",
+            "2": "Several factual errors, significant outdated content",
+            "1": "Major factual errors, mostly outdated or incorrect"
+          },
+          "fact_check_sources": [
+            "official_documentation",
+            "peer_reviewed_research",
+            "industry_standards"
+          ],
+          "weight": 0.30
+        },
+        "clarity": {
+          "id": "dim_clarity",
+          "name": "Clarity",
+          "description": "Verständlichkeit für die Zielgruppe",
+          "scoring_rubric": {
+            "5": "Crystal clear, perfect for audience, excellent examples",
+            "4": "Clear, mostly understandable, adequate examples",
+            "3": "Reasonably clear, some confusing parts, few examples",
+            "2": "Unclear, complex for intended audience, lacks examples",
+            "1": "Very unclear or incomprehensible for the audience"
+          },
+          "audience_levels": ["beginner", "intermediate", "expert"],
+          "weight": 0.20
+        },
+        "relevance": {
+          "id": "dim_relevance",
+          "name": "Relevance",
+          "description": "Bezug zur ursprünglichen Frage",
+          "scoring_rubric": {
+            "5": "Perfectly relevant, focused on question, no filler",
+            "4": "Mostly relevant, minor tangents, mostly focused",
+            "3": "Relevant with some tangential content",
+            "2": "Partially relevant, significant tangents",
+            "1": "Off-topic or largely irrelevant"
+          },
+          "weight": 0.10
+        }
+      },
+
+      "prompt_strategy_evaluation": {
+        "cot_eval": {
+          "strategy": "chain_of_thought",
+          "specific_checks": [
+            {
+              "check": "Step clarity",
+              "description": "Each step is clearly defined and actionable",
+              "scoring": "1-5"
+            },
+            {
+              "check": "Logical progression",
+              "description": "Steps follow a logical sequence",
+              "scoring": "1-5"
+            },
+            {
+              "check": "Reasoning transparency",
+              "description": "Why each step is necessary is explained",
+              "scoring": "1-5"
+            },
+            {
+              "check": "Completeness of reasoning",
+              "description": "All reasoning steps are shown, not skipped",
+              "scoring": "1-5"
+            }
+          ]
+        },
+        "few_shot_eval": {
+          "strategy": "few_shot_learning",
+          "specific_checks": [
+            {
+              "check": "Example relevance",
+              "description": "Examples closely match the target task",
+              "scoring": "1-5"
+            },
+            {
+              "check": "Pattern clarity",
+              "description": "The pattern to learn is obvious from examples",
+              "scoring": "1-5"
+            },
+            {
+              "check": "Example variety",
+              "description": "Examples show different valid variations",
+              "scoring": "1-5"
+            },
+            {
+              "check": "Task application",
+              "description": "New task correctly applies learned pattern",
+              "scoring": "1-5"
+            }
+          ]
+        },
+        "role_play_eval": {
+          "strategy": "role_play_persona",
+          "specific_checks": [
+            {
+              "check": "Role consistency",
+              "description": "Response stays in character throughout",
+              "scoring": "1-5"
+            },
+            {
+              "check": "Expertise authenticity",
+              "description": "Advice reflects claimed expertise level",
+              "scoring": "1-5"
+            },
+            {
+              "check": "Communication style",
+              "description": "Matches role's typical communication",
+              "scoring": "1-5"
+            },
+            {
+              "check": "Domain accuracy",
+              "description": "Domain-specific content is accurate",
+              "scoring": "1-5"
+            }
+          ]
+        }
+      }
+    },
+
+    "figma_layer_contract": {
+      "description": "Verbindliche Layer-Struktur für Figma Frames",
+      "required_structure": {
+        "frame_naming": "PROMPT/{{prompt_id}}/{{version}}",
+        "example": "PROMPT/cot-analysis/v1"
+      },
+      "required_children_frames": [
+        {
+          "name": "METADATA",
+          "type": "group",
+          "required_fields": [
+            {
+              "field": "title",
+              "type": "text",
+              "max_chars": 100
+            },
+            {
+              "field": "description",
+              "type": "text",
+              "max_chars": 500
+            },
+            {
+              "field": "category",
+              "type": "text",
+              "allowed_values": ["analysis", "generation", "reasoning", "classification", "other"]
+            },
+            {
+              "field": "strategy",
+              "type": "text",
+              "allowed_values": ["chain-of-thought", "few-shot", "role-play", "tree-of-thought", "meta-reasoning"]
+            },
+            {
+              "field": "version",
+              "type": "text",
+              "pattern": "^v\\d+(\\.\\d+)*$",
+              "example": "v1, v1.0, v1.2.3"
+            }
+          ]
+        },
+        {
+          "name": "CONTENT",
+          "type": "group",
+          "required_children": [
+            {
+              "name": "system",
+              "type": "text_frame",
+              "content_type": "system_message",
+              "validation": "not_empty"
+            },
+            {
+              "name": "user_template",
+              "type": "text_frame",
+              "content_type": "user_template",
+              "validation": "not_empty"
+            },
+            {
+              "name": "guardrails",
+              "type": "text_frame",
+              "content_type": "constraints",
+              "validation": "optional"
+            },
+            {
+              "name": "output_format",
+              "type": "text_frame",
+              "content_type": "output_spec",
+              "validation": "optional"
+            }
+          ]
+        },
+        {
+          "name": "EXAMPLES",
+          "type": "group",
+          "required_children": "dynamic",
+          "example_structure": {
+            "example_1": {
+              "type": "group",
+              "children": [
+                {"name": "input", "type": "text_frame"},
+                {"name": "output", "type": "text_frame"},
+                {"name": "explanation", "type": "text_frame", "optional": true}
+              ]
+            }
+          }
+        },
+        {
+          "name": "STRATEGY_CONFIG",
+          "type": "group",
+          "strategy_specific": {
+            "chain_of_thought": {
+              "fields": ["num_steps", "step_structure", "reasoning_style"]
+            },
+            "few_shot": {
+              "fields": ["num_examples", "example_format", "pattern_description"]
+            },
+            "role_play": {
+              "fields": ["role_name", "expertise_areas", "communication_style"]
+            },
+            "tree_of_thought": {
+              "fields": ["num_branches", "branch_comparison_format"]
+            }
+          }
+        }
+      ]
+    },
+
+    "workflow_integration": {
+      "github_actions_workflow": {
+        "trigger": "on_pull_request_figma_changes",
+        "steps": [
+          "detect_figma_file_changes",
+          "export_prompts_from_figma",
+          "validate_schema",
+          "run_tests",
+          "generate_prompt_catalog",
+          "create_comment_with_diff"
+        ]
+      },
+      "mcp_server_integration": {
+        "tools_exposed": [
+          {
+            "tool": "list_prompts",
+            "description": "List all available prompts"
+          },
+          {
+            "tool": "get_prompt",
+            "parameters": ["prompt_id", "version"]
+          },
+          {
+            "tool": "create_prompt",
+            "parameters": ["prompt_spec_json"]
+          },
+          {
+            "tool": "evaluate_prompt",
+            "parameters": ["prompt_id", "test_cases", "models"]
+          }
+        ]
+      }
+    }
+  }
+}

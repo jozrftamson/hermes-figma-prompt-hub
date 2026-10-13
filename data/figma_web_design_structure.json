@@ -1,0 +1,1161 @@
+{
+  "figma_design_system": {
+    "version": "1.0.0",
+    "project": "hermes-figma-prompt-hub",
+    "description": "Vollständiges Web Design System mit Klickstruktur, Komponenten, Farben, CSS und Prompting-Integation",
+    
+    "color_palette": {
+      "primary": {
+        "name": "Primary Blue",
+        "hex": "#2563EB",
+        "rgb": "rgb(37, 99, 235)",
+        "hsl": "hsl(217, 92%, 53%)",
+        "css_variable": "--color-primary",
+        "variants": {
+          "50": "#EFF6FF",
+          "100": "#DBEAFE",
+          "200": "#BFDBFE",
+          "300": "#93C5FD",
+          "400": "#60A5FA",
+          "500": "#3B82F6",
+          "600": "#2563EB",
+          "700": "#1D4ED8",
+          "800": "#1E40AF",
+          "900": "#1E3A8A",
+          "950": "#0C2340"
+        },
+        "usage": ["buttons", "links", "active_states", "highlights"],
+        "accessibility": {
+          "wcag_aa": true,
+          "wcag_aaa": false,
+          "contrast_ratio": 4.5
+        }
+      },
+      "secondary": {
+        "name": "Secondary Purple",
+        "hex": "#A855F7",
+        "rgb": "rgb(168, 85, 247)",
+        "hsl": "hsl(280, 85%, 65%)",
+        "css_variable": "--color-secondary",
+        "variants": {
+          "50": "#FAF5FF",
+          "100": "#F3E8FF",
+          "200": "#E9D5FF",
+          "300": "#D8B4FE",
+          "400": "#C084FC",
+          "500": "#A855F7",
+          "600": "#9333EA",
+          "700": "#7E22CE",
+          "800": "#6B21A8",
+          "900": "#581C87"
+        },
+        "usage": ["accents", "badges", "decorative_elements"],
+        "accessibility": {
+          "wcag_aa": true,
+          "wcag_aaa": true,
+          "contrast_ratio": 7.2
+        }
+      },
+      "semantic": {
+        "success": {
+          "hex": "#10B981",
+          "name": "Success Green",
+          "css_variable": "--color-success",
+          "usage": ["success_states", "confirmations", "positive_feedback"]
+        },
+        "warning": {
+          "hex": "#F59E0B",
+          "name": "Warning Amber",
+          "css_variable": "--color-warning",
+          "usage": ["alerts", "cautions", "pending_states"]
+        },
+        "error": {
+          "hex": "#EF4444",
+          "name": "Error Red",
+          "css_variable": "--color-error",
+          "usage": ["errors", "destructive_actions", "invalid_states"]
+        },
+        "info": {
+          "hex": "#0EA5E9",
+          "name": "Info Cyan",
+          "css_variable": "--color-info",
+          "usage": ["info_messages", "hints", "documentation"]
+        }
+      },
+      "neutral": {
+        "white": {
+          "hex": "#FFFFFF",
+          "css_variable": "--color-white",
+          "usage": ["backgrounds", "text_on_dark"]
+        },
+        "black": {
+          "hex": "#000000",
+          "css_variable": "--color-black",
+          "usage": ["text", "borders", "shadows"]
+        },
+        "gray": {
+          "50": "#F9FAFB",
+          "100": "#F3F4F6",
+          "200": "#E5E7EB",
+          "300": "#D1D5DB",
+          "400": "#9CA3AF",
+          "500": "#6B7280",
+          "600": "#4B5563",
+          "700": "#374151",
+          "800": "#1F2937",
+          "900": "#111827",
+          "css_variable": "--color-gray"
+        }
+      },
+      "gradients": {
+        "primary_gradient": {
+          "name": "Primary to Secondary",
+          "from": "#2563EB",
+          "to": "#A855F7",
+          "angle": "135deg",
+          "css": "linear-gradient(135deg, #2563EB 0%, #A855F7 100%)",
+          "usage": ["hero_sections", "cta_buttons", "premium_features"]
+        },
+        "dark_gradient": {
+          "name": "Dark Overlay",
+          "from": "rgba(0, 0, 0, 0.8)",
+          "to": "rgba(0, 0, 0, 0.2)",
+          "angle": "180deg",
+          "css": "linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 100%)",
+          "usage": ["overlays", "text_on_images", "dark_modes"]
+        }
+      }
+    },
+
+    "typography": {
+      "font_families": {
+        "sans": {
+          "name": "Inter",
+          "stack": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          "css_variable": "--font-sans",
+          "usage": ["body_text", "ui_labels", "interface"],
+          "weights": [300, 400, 500, 600, 700, 800]
+        },
+        "mono": {
+          "name": "JetBrains Mono",
+          "stack": "'JetBrains Mono', 'Courier New', monospace",
+          "css_variable": "--font-mono",
+          "usage": ["code", "technical_text", "data_display"],
+          "weights": [400, 500, 600]
+        },
+        "serif": {
+          "name": "Georgia",
+          "stack": "Georgia, 'Times New Roman', serif",
+          "css_variable": "--font-serif",
+          "usage": ["headlines", "editorial", "quotes"],
+          "weights": [400, 700]
+        }
+      },
+      "scales": {
+        "xs": {
+          "size": "12px",
+          "line_height": "1.3",
+          "letter_spacing": "0.5px",
+          "css_variable": "--text-xs",
+          "usage": ["captions", "helper_text", "labels"]
+        },
+        "sm": {
+          "size": "14px",
+          "line_height": "1.4",
+          "letter_spacing": "0px",
+          "css_variable": "--text-sm",
+          "usage": ["secondary_text", "form_labels", "small_ui"]
+        },
+        "base": {
+          "size": "16px",
+          "line_height": "1.5",
+          "letter_spacing": "0px",
+          "css_variable": "--text-base",
+          "usage": ["body_text", "default_ui", "descriptions"]
+        },
+        "lg": {
+          "size": "18px",
+          "line_height": "1.6",
+          "letter_spacing": "0px",
+          "css_variable": "--text-lg",
+          "usage": ["section_text", "larger_descriptions"]
+        },
+        "xl": {
+          "size": "20px",
+          "line_height": "1.7",
+          "letter_spacing": "-0.5px",
+          "css_variable": "--text-xl",
+          "usage": ["subheadings", "card_titles"]
+        },
+        "2xl": {
+          "size": "24px",
+          "line_height": "1.8",
+          "letter_spacing": "-0.5px",
+          "css_variable": "--text-2xl",
+          "usage": ["section_titles", "modal_headers"]
+        },
+        "3xl": {
+          "size": "30px",
+          "line_height": "1.8",
+          "letter_spacing": "-1px",
+          "css_variable": "--text-3xl",
+          "usage": ["page_titles", "hero_headings"]
+        },
+        "4xl": {
+          "size": "36px",
+          "line_height": "1.9",
+          "letter_spacing": "-1.5px",
+          "css_variable": "--text-4xl",
+          "usage": ["h1", "hero_headlines"]
+        }
+      }
+    },
+
+    "spacing": {
+      "scale": {
+        "0": "0px",
+        "1": "4px",
+        "2": "8px",
+        "3": "12px",
+        "4": "16px",
+        "5": "20px",
+        "6": "24px",
+        "8": "32px",
+        "10": "40px",
+        "12": "48px",
+        "16": "64px",
+        "20": "80px",
+        "24": "96px"
+      },
+      "css_variables": {
+        "--spacing-0": "0px",
+        "--spacing-1": "4px",
+        "--spacing-2": "8px",
+        "--spacing-3": "12px",
+        "--spacing-4": "16px",
+        "--spacing-5": "20px",
+        "--spacing-6": "24px",
+        "--spacing-8": "32px",
+        "--spacing-10": "40px",
+        "--spacing-12": "48px",
+        "--spacing-16": "64px",
+        "--spacing-20": "80px",
+        "--spacing-24": "96px"
+      },
+      "usage": {
+        "component_padding": ["4px", "8px", "12px", "16px"],
+        "element_margin": ["8px", "16px", "24px", "32px"],
+        "section_spacing": ["32px", "48px", "64px", "96px"]
+      }
+    },
+
+    "border_radius": {
+      "values": {
+        "none": "0px",
+        "sm": "2px",
+        "base": "4px",
+        "md": "6px",
+        "lg": "8px",
+        "xl": "12px",
+        "2xl": "16px",
+        "3xl": "20px",
+        "full": "9999px"
+      },
+      "css_variables": {
+        "--radius-none": "0px",
+        "--radius-sm": "2px",
+        "--radius-base": "4px",
+        "--radius-md": "6px",
+        "--radius-lg": "8px",
+        "--radius-xl": "12px",
+        "--radius-2xl": "16px",
+        "--radius-3xl": "20px",
+        "--radius-full": "9999px"
+      },
+      "usage": {
+        "buttons": "8px",
+        "cards": "12px",
+        "modals": "16px",
+        "inputs": "6px",
+        "pills": "9999px"
+      }
+    },
+
+    "shadows": {
+      "elevation": {
+        "none": {
+          "css": "none",
+          "usage": ["flat", "no_elevation"]
+        },
+        "sm": {
+          "css": "0 1px 2px rgba(0, 0, 0, 0.05)",
+          "usage": ["subtle_emphasis"]
+        },
+        "base": {
+          "css": "0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)",
+          "usage": ["default_cards", "inputs"]
+        },
+        "md": {
+          "css": "0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)",
+          "usage": ["elevated_ui", "hover_states"]
+        },
+        "lg": {
+          "css": "0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05)",
+          "usage": ["modals", "dropdowns"]
+        },
+        "xl": {
+          "css": "0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04)",
+          "usage": ["hero_sections", "featured_cards"]
+        }
+      }
+    },
+
+    "components": {
+      "button": {
+        "variants": {
+          "primary": {
+            "background": "#2563EB",
+            "color": "#FFFFFF",
+            "border": "none",
+            "padding": "12px 24px",
+            "border_radius": "8px",
+            "font_weight": "600",
+            "shadow": "0 1px 3px rgba(0, 0, 0, 0.1)",
+            "hover": {
+              "background": "#1D4ED8",
+              "shadow": "0 4px 6px rgba(0, 0, 0, 0.1)"
+            },
+            "active": {
+              "background": "#1E40AF",
+              "transform": "scale(0.98)"
+            },
+            "disabled": {
+              "background": "#D1D5DB",
+              "color": "#9CA3AF",
+              "cursor": "not-allowed"
+            },
+            "css": ".btn-primary { background: #2563EB; color: #FFF; padding: 12px 24px; border-radius: 8px; font-weight: 600; } .btn-primary:hover { background: #1D4ED8; }"
+          },
+          "secondary": {
+            "background": "#F3F4F6",
+            "color": "#1F2937",
+            "border": "1px solid #E5E7EB",
+            "padding": "12px 24px",
+            "border_radius": "8px",
+            "font_weight": "600",
+            "hover": {
+              "background": "#E5E7EB",
+              "border_color": "#D1D5DB"
+            },
+            "css": ".btn-secondary { background: #F3F4F6; color: #1F2937; border: 1px solid #E5E7EB; }"
+          },
+          "outline": {
+            "background": "transparent",
+            "color": "#2563EB",
+            "border": "2px solid #2563EB",
+            "padding": "10px 22px",
+            "border_radius": "8px",
+            "font_weight": "600",
+            "hover": {
+              "background": "#EFF6FF",
+              "color": "#1D4ED8"
+            },
+            "css": ".btn-outline { background: transparent; color: #2563EB; border: 2px solid #2563EB; }"
+          },
+          "ghost": {
+            "background": "transparent",
+            "color": "#1F2937",
+            "border": "none",
+            "padding": "12px 24px",
+            "font_weight": "600",
+            "hover": {
+              "background": "#F3F4F6"
+            },
+            "css": ".btn-ghost { background: transparent; color: #1F2937; }"
+          }
+        },
+        "sizes": {
+          "sm": {
+            "padding": "8px 16px",
+            "font_size": "14px",
+            "line_height": "1.4"
+          },
+          "md": {
+            "padding": "12px 24px",
+            "font_size": "16px",
+            "line_height": "1.5"
+          },
+          "lg": {
+            "padding": "16px 32px",
+            "font_size": "18px",
+            "line_height": "1.5"
+          }
+        },
+        "states": ["default", "hover", "active", "focus", "disabled", "loading"]
+      },
+
+      "input": {
+        "variants": {
+          "text": {
+            "padding": "12px 16px",
+            "border": "1px solid #E5E7EB",
+            "border_radius": "6px",
+            "font_size": "16px",
+            "background": "#FFFFFF",
+            "color": "#1F2937",
+            "focus": {
+              "border_color": "#2563EB",
+              "box_shadow": "0 0 0 3px rgba(37, 99, 235, 0.1)",
+              "outline": "none"
+            },
+            "disabled": {
+              "background": "#F3F4F6",
+              "color": "#9CA3AF",
+              "border_color": "#D1D5DB"
+            },
+            "error": {
+              "border_color": "#EF4444",
+              "box_shadow": "0 0 0 3px rgba(239, 68, 68, 0.1)"
+            },
+            "css": ".input { padding: 12px 16px; border: 1px solid #E5E7EB; border-radius: 6px; } .input:focus { border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }"
+          },
+          "textarea": {
+            "padding": "12px 16px",
+            "min_height": "120px",
+            "border": "1px solid #E5E7EB",
+            "border_radius": "6px",
+            "font_family": "Inter",
+            "font_size": "16px",
+            "resize": "vertical"
+          },
+          "select": {
+            "padding": "12px 16px",
+            "border": "1px solid #E5E7EB",
+            "border_radius": "6px",
+            "background": "#FFFFFF",
+            "appearance": "none",
+            "background_image": "url(...svg-dropdown-icon...)"
+          }
+        }
+      },
+
+      "card": {
+        "variants": {
+          "default": {
+            "background": "#FFFFFF",
+            "border": "1px solid #E5E7EB",
+            "border_radius": "12px",
+            "padding": "24px",
+            "shadow": "0 1px 3px rgba(0, 0, 0, 0.1)",
+            "hover": {
+              "shadow": "0 10px 15px rgba(0, 0, 0, 0.1)",
+              "transform": "translateY(-2px)",
+              "transition": "all 0.3s ease"
+            }
+          },
+          "elevated": {
+            "background": "#FFFFFF",
+            "border": "none",
+            "border_radius": "12px",
+            "padding": "24px",
+            "shadow": "0 10px 15px rgba(0, 0, 0, 0.1)"
+          },
+          "outlined": {
+            "background": "transparent",
+            "border": "2px solid #E5E7EB",
+            "border_radius": "12px",
+            "padding": "24px"
+          }
+        }
+      },
+
+      "modal": {
+        "overlay": {
+          "background": "rgba(0, 0, 0, 0.5)",
+          "backdrop_filter": "blur(4px)",
+          "animation": "fadeIn 0.3s ease"
+        },
+        "content": {
+          "background": "#FFFFFF",
+          "border_radius": "16px",
+          "padding": "32px",
+          "max_width": "600px",
+          "shadow": "0 20px 25px rgba(0, 0, 0, 0.15)",
+          "animation": "slideUp 0.3s ease"
+        },
+        "header": {
+          "padding_bottom": "16px",
+          "border_bottom": "1px solid #E5E7EB",
+          "font_size": "24px",
+          "font_weight": "700"
+        },
+        "body": {
+          "padding": "24px 0",
+          "color": "#4B5563"
+        },
+        "footer": {
+          "padding_top": "24px",
+          "border_top": "1px solid #E5E7EB",
+          "display": "flex",
+          "gap": "12px",
+          "justify_content": "flex-end"
+        }
+      }
+    },
+
+    "user_interaction_flows": {
+      "navigation": {
+        "primary_nav": {
+          "type": "horizontal",
+          "position": "top",
+          "height": "64px",
+          "background": "#FFFFFF",
+          "border_bottom": "1px solid #E5E7EB",
+          "items": [
+            {
+              "label": "Dashboard",
+              "icon": "dashboard",
+              "action": "navigate_to_dashboard",
+              "active_state": "primary_color"
+            },
+            {
+              "label": "Prompts",
+              "icon": "prompt",
+              "action": "navigate_to_prompts",
+              "submenu": true
+            },
+            {
+              "label": "Evaluations",
+              "icon": "chart",
+              "action": "navigate_to_evals"
+            },
+            {
+              "label": "Settings",
+              "icon": "settings",
+              "action": "open_settings_modal"
+            }
+          ]
+        },
+        "breadcrumb": {
+          "type": "hierarchical",
+          "separator": "/",
+          "items": ["Home", "Prompts", "Chain-of-Thought"],
+          "last_item_active": false
+        }
+      },
+
+      "user_flows": {
+        "create_prompt": {
+          "id": "flow_create_prompt",
+          "name": "Create New Prompt",
+          "start_screen": "Dashboard",
+          "steps": [
+            {
+              "step": 1,
+              "screen": "Prompts List",
+              "action": "click_create_button",
+              "element": "Button (Primary)",
+              "transition": "modal_open"
+            },
+            {
+              "step": 2,
+              "screen": "Prompt Form Modal",
+              "action": "fill_prompt_details",
+              "fields": ["name", "description", "category", "prompt_text"],
+              "transition": "conditional"
+            },
+            {
+              "step": 3,
+              "screen": "Add Variables & Guardrails",
+              "action": "configure_variables",
+              "sub_steps": [
+                "add_variable",
+                "set_default_value",
+                "add_guardrail"
+              ],
+              "transition": "next_button"
+            },
+            {
+              "step": 4,
+              "screen": "Select Strategy & Examples",
+              "action": "choose_strategy",
+              "options": ["chain-of-thought", "few-shot", "role-play"],
+              "action_2": "add_examples",
+              "transition": "next_button"
+            },
+            {
+              "step": 5,
+              "screen": "Review & Publish",
+              "action": "review_prompt",
+              "elements": ["preview_panel", "validation_status"],
+              "cta": "Publish Prompt",
+              "transition": "success_modal"
+            },
+            {
+              "step": 6,
+              "screen": "Success State",
+              "action": "show_confirmation",
+              "next_action": "back_to_prompts"
+            }
+          ]
+        },
+
+        "evaluate_prompt": {
+          "id": "flow_evaluate_prompt",
+          "name": "Run Evaluation on Prompt",
+          "start_screen": "Prompt Detail",
+          "steps": [
+            {
+              "step": 1,
+              "screen": "Prompt Detail Page",
+              "action": "click_run_evaluation",
+              "element": "Button (Secondary)",
+              "transition": "modal_open"
+            },
+            {
+              "step": 2,
+              "screen": "Evaluation Configuration",
+              "action": "select_eval_cases",
+              "field_type": "multi_select",
+              "options": ["case1", "case2", "case3"],
+              "transition": "next"
+            },
+            {
+              "step": 3,
+              "screen": "Model Selection",
+              "action": "choose_model",
+              "options": ["gpt-4", "gpt-3.5-turbo", "hermes-3"],
+              "transition": "run_evaluation"
+            },
+            {
+              "step": 4,
+              "screen": "Evaluation Running (Loading)",
+              "action": "show_progress",
+              "elements": ["progress_bar", "status_text", "cancel_button"],
+              "transition": "completion"
+            },
+            {
+              "step": 5,
+              "screen": "Evaluation Results",
+              "action": "display_results",
+              "elements": ["scores_table", "metrics_chart", "detailed_results"],
+              "cta": "Export Results"
+            }
+          ]
+        },
+
+        "configure_settings": {
+          "id": "flow_configure_settings",
+          "name": "User Settings Configuration",
+          "start_screen": "Dashboard",
+          "steps": [
+            {
+              "step": 1,
+              "screen": "Navigation Header",
+              "action": "click_settings_icon",
+              "element": "Icon Button",
+              "transition": "modal_open"
+            },
+            {
+              "step": 2,
+              "screen": "Settings Modal",
+              "action": "view_tabs",
+              "tabs": ["account", "api_keys", "integrations", "preferences"],
+              "transition": "tab_selection"
+            },
+            {
+              "step": 3,
+              "screen": "Selected Tab (e.g., API Keys)",
+              "action": "manage_settings",
+              "possible_actions": ["generate_key", "revoke_key", "copy_key"],
+              "transition": "confirmation"
+            }
+          ]
+        }
+      }
+    },
+
+    "interaction_states": {
+      "button_states": {
+        "default": {
+          "visual": "normal",
+          "cursor": "pointer",
+          "interactive": true
+        },
+        "hover": {
+          "visual": "elevated_shadow + color_change",
+          "cursor": "pointer",
+          "interactive": true
+        },
+        "active": {
+          "visual": "pressed_down + darker_color",
+          "cursor": "pointer",
+          "interactive": true
+        },
+        "focus": {
+          "visual": "outline_ring",
+          "cursor": "pointer",
+          "interactive": true
+        },
+        "disabled": {
+          "visual": "grayed_out",
+          "cursor": "not-allowed",
+          "interactive": false
+        },
+        "loading": {
+          "visual": "spinner_animation",
+          "cursor": "wait",
+          "interactive": false,
+          "text": "Processing..."
+        }
+      },
+
+      "input_states": {
+        "default": {
+          "border_color": "#E5E7EB",
+          "background": "#FFFFFF",
+          "placeholder_color": "#9CA3AF"
+        },
+        "focus": {
+          "border_color": "#2563EB",
+          "box_shadow": "0 0 0 3px rgba(37, 99, 235, 0.1)",
+          "outline": "none"
+        },
+        "filled": {
+          "border_color": "#D1D5DB",
+          "text_color": "#1F2937"
+        },
+        "error": {
+          "border_color": "#EF4444",
+          "box_shadow": "0 0 0 3px rgba(239, 68, 68, 0.1)",
+          "helper_text_color": "#EF4444"
+        },
+        "disabled": {
+          "background": "#F3F4F6",
+          "border_color": "#D1D5DB",
+          "text_color": "#9CA3AF",
+          "cursor": "not-allowed"
+        },
+        "success": {
+          "border_color": "#10B981",
+          "icon": "checkmark",
+          "helper_text_color": "#10B981"
+        }
+      }
+    },
+
+    "layout_grid": {
+      "system": "12-column",
+      "breakpoints": {
+        "mobile": {
+          "max_width": "640px",
+          "columns": 4,
+          "gutter": "16px"
+        },
+        "tablet": {
+          "min_width": "640px",
+          "max_width": "1024px",
+          "columns": 8,
+          "gutter": "24px"
+        },
+        "desktop": {
+          "min_width": "1024px",
+          "columns": 12,
+          "gutter": "32px"
+        },
+        "wide": {
+          "min_width": "1440px",
+          "columns": 12,
+          "gutter": "32px",
+          "max_width": "1920px"
+        }
+      }
+    },
+
+    "animations": {
+      "transitions": {
+        "fast": "150ms ease-out",
+        "base": "300ms ease-out",
+        "slow": "500ms ease-out"
+      },
+      "keyframes": {
+        "fadeIn": {
+          "0%": "opacity: 0",
+          "100%": "opacity: 1",
+          "duration": "300ms"
+        },
+        "slideUp": {
+          "0%": "transform: translateY(16px); opacity: 0",
+          "100%": "transform: translateY(0); opacity: 1",
+          "duration": "300ms"
+        },
+        "slideDown": {
+          "0%": "transform: translateY(-16px); opacity: 0",
+          "100%": "transform: translateY(0); opacity: 1",
+          "duration": "300ms"
+        },
+        "spin": {
+          "0%": "transform: rotate(0deg)",
+          "100%": "transform: rotate(360deg)",
+          "duration": "1000ms",
+          "iteration": "infinite"
+        }
+      }
+    },
+
+    "page_structure": {
+      "dashboard": {
+        "type": "landing_page",
+        "path": "/dashboard",
+        "layout": "grid_12_col",
+        "sections": [
+          {
+            "name": "Header",
+            "height": "64px",
+            "components": ["logo", "navigation", "user_menu"],
+            "background": "#FFFFFF",
+            "border_bottom": "1px solid #E5E7EB"
+          },
+          {
+            "name": "Hero Section",
+            "height": "auto",
+            "components": ["headline", "subheadline", "cta_button"],
+            "background": "linear-gradient(135deg, #2563EB 0%, #A855F7 100%)",
+            "padding": "96px 32px",
+            "text_color": "#FFFFFF"
+          },
+          {
+            "name": "Stats Section",
+            "height": "auto",
+            "layout": "4_column_grid",
+            "components": [
+              {"title": "Total Prompts", "value": "42", "icon": "prompt"},
+              {"title": "Avg. Score", "value": "8.2/10", "icon": "star"},
+              {"title": "Total Evals", "value": "156", "icon": "chart"},
+              {"title": "Active Models", "value": "5", "icon": "model"}
+            ],
+            "background": "#F9FAFB",
+            "padding": "48px 32px"
+          },
+          {
+            "name": "Recent Prompts",
+            "height": "auto",
+            "components": ["section_title", "prompts_table", "view_all_button"],
+            "background": "#FFFFFF",
+            "padding": "48px 32px"
+          },
+          {
+            "name": "Footer",
+            "height": "auto",
+            "components": ["links", "copyright", "social_icons"],
+            "background": "#1F2937",
+            "text_color": "#FFFFFF",
+            "padding": "32px"
+          }
+        ]
+      },
+
+      "prompt_list": {
+        "type": "list_page",
+        "path": "/prompts",
+        "layout": "grid_12_col",
+        "sections": [
+          {
+            "name": "Header with Actions",
+            "height": "auto",
+            "components": ["page_title", "search_input", "create_button", "filter_dropdown"],
+            "background": "#FFFFFF",
+            "padding": "32px",
+            "border_bottom": "1px solid #E5E7EB"
+          },
+          {
+            "name": "Sidebar Filters",
+            "width": "25%",
+            "height": "auto",
+            "components": ["category_filter", "strategy_filter", "date_range_filter"],
+            "background": "#F9FAFB",
+            "padding": "24px"
+          },
+          {
+            "name": "Prompts Grid",
+            "width": "75%",
+            "height": "auto",
+            "layout": "3_column_responsive_grid",
+            "components": ["prompt_cards"],
+            "padding": "24px"
+          }
+        ]
+      },
+
+      "prompt_detail": {
+        "type": "detail_page",
+        "path": "/prompts/:id",
+        "layout": "grid_12_col",
+        "sections": [
+          {
+            "name": "Header",
+            "height": "auto",
+            "components": ["back_button", "prompt_title", "status_badge", "action_menu"],
+            "padding": "24px 32px",
+            "border_bottom": "1px solid #E5E7EB"
+          },
+          {
+            "name": "Main Content (8 col)",
+            "width": "66%",
+            "components": [
+              {
+                "section": "Prompt Content",
+                "components": ["system_message", "user_template", "output_format"]
+              },
+              {
+                "section": "Variables & Guardrails",
+                "components": ["variables_table", "guardrails_table"]
+              },
+              {
+                "section": "Strategy & Examples",
+                "components": ["strategy_selector", "examples_section"]
+              }
+            ]
+          },
+          {
+            "name": "Sidebar (4 col)",
+            "width": "34%",
+            "components": [
+              {"component": "Metadata Panel", "fields": ["created", "updated", "version"]},
+              {"component": "Quick Actions", "actions": ["evaluate", "duplicate", "export"]},
+              {"component": "Recent Evals", "limit": 5}
+            ]
+          }
+        ]
+      }
+    },
+
+    "prompting_data_mapping": {
+      "description": "Wie Figma Design-Elemente zu Prompt-Strategien und Kontext führen",
+      "mappings": [
+        {
+          "design_element": "Button Primary",
+          "css_class": "btn-primary",
+          "color": "#2563EB",
+          "prompt_context": "Primary Call-to-Action — Nutze Chain-of-Thought für diese Aktion",
+          "prompt_instruction": "Der Nutzer hat auf die primäre Aktion geklickt. Dies zeigt hohe Intention. Antworte mit klaren, strukturierten Schritten."
+        },
+        {
+          "design_element": "Input Field (Focus State)",
+          "css_class": "input:focus",
+          "visual": "blue_outline",
+          "prompt_context": "User Concentration — Nutze präzise, fokussierte Prompting",
+          "prompt_instruction": "Der Nutzer konzentriert sich auf ein spezifisches Eingabefeld. Gib kurz, präzise und kontextabhängige Hinweise."
+        },
+        {
+          "design_element": "Card Hover State",
+          "css_class": "card:hover",
+          "visual": "elevated_shadow",
+          "prompt_context": "Exploration Phase — Nutze Few-Shot zum Zeigen von Optionen",
+          "prompt_instruction": "Der Nutzer erkundet Optionen. Präsentiere mehrere Beispiele mit klaren Unterscheidungen."
+        },
+        {
+          "design_element": "Modal Dialog",
+          "css_class": "modal",
+          "visual": "dark_overlay",
+          "prompt_context": "Decision Point — Nutze Structured Output Format",
+          "prompt_instruction": "Der Nutzer trifft eine Entscheidung. Gib klar strukturierte Optionen und Konsequenzen."
+        },
+        {
+          "design_element": "Loading State (Spinner)",
+          "css_class": "loading",
+          "visual": "spinner_animation",
+          "prompt_context": "Waiting State — Nutze Meta-Reasoning für Validierung",
+          "prompt_instruction": "System verarbeitet. Überprüfe intern die Validität der bisherigen Schritte und bereite aussagekräftige Rückmeldung vor."
+        },
+        {
+          "design_element": "Error State (Input)",
+          "css_class": "input:error",
+          "color": "#EF4444",
+          "prompt_context": "User Recovery — Nutze Role-Play als Expert-Advisor",
+          "prompt_instruction": "Es gibt einen Fehler. Hilf dem Nutzer als hilfsbereiter Experte: erkläre das Problem und gib konkrete Lösungsschritte."
+        }
+      ]
+    },
+
+    "css_design_tree": {
+      "root": {
+        "selector": ":root",
+        "variables": {
+          "colors": [
+            "--color-primary: #2563EB",
+            "--color-secondary: #A855F7",
+            "--color-success: #10B981",
+            "--color-warning: #F59E0B",
+            "--color-error: #EF4444",
+            "--color-info: #0EA5E9"
+          ],
+          "typography": [
+            "--font-sans: Inter, sans-serif",
+            "--font-mono: 'JetBrains Mono', monospace",
+            "--text-xs: 12px",
+            "--text-sm: 14px",
+            "--text-base: 16px",
+            "--text-lg: 18px",
+            "--text-xl: 20px",
+            "--text-2xl: 24px",
+            "--text-3xl: 30px",
+            "--text-4xl: 36px"
+          ],
+          "spacing": [
+            "--spacing-1: 4px",
+            "--spacing-2: 8px",
+            "--spacing-3: 12px",
+            "--spacing-4: 16px",
+            "--spacing-5: 20px",
+            "--spacing-6: 24px",
+            "--spacing-8: 32px",
+            "--spacing-10: 40px"
+          ],
+          "radii": [
+            "--radius-sm: 2px",
+            "--radius-base: 4px",
+            "--radius-md: 6px",
+            "--radius-lg: 8px",
+            "--radius-xl: 12px",
+            "--radius-2xl: 16px",
+            "--radius-full: 9999px"
+          ],
+          "shadows": [
+            "--shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05)",
+            "--shadow-base: 0 1px 3px rgba(0, 0, 0, 0.1)",
+            "--shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1)",
+            "--shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1)",
+            "--shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1)"
+          ]
+        }
+      },
+      "typography_hierarchy": {
+        "h1": {
+          "selector": "h1",
+          "font_size": "var(--text-4xl)",
+          "font_weight": "700",
+          "line_height": "1.9",
+          "letter_spacing": "-1.5px",
+          "margin_bottom": "var(--spacing-6)"
+        },
+        "h2": {
+          "selector": "h2",
+          "font_size": "var(--text-3xl)",
+          "font_weight": "700",
+          "line_height": "1.8",
+          "letter_spacing": "-1px",
+          "margin_bottom": "var(--spacing-5)"
+        },
+        "h3": {
+          "selector": "h3",
+          "font_size": "var(--text-2xl)",
+          "font_weight": "600",
+          "line_height": "1.7",
+          "margin_bottom": "var(--spacing-4)"
+        },
+        "body": {
+          "selector": "body, p",
+          "font_family": "var(--font-sans)",
+          "font_size": "var(--text-base)",
+          "line_height": "1.5",
+          "color": "#4B5563"
+        }
+      },
+      "component_styles": {
+        "button": {
+          "selector": ".btn, button",
+          "base": {
+            "display": "inline-flex",
+            "align_items": "center",
+            "justify_content": "center",
+            "font_weight": "600",
+            "transition": "all 0.3s ease",
+            "cursor": "pointer",
+            "border": "none",
+            "outline": "none"
+          },
+          "primary": {
+            "selector": ".btn-primary",
+            "background": "var(--color-primary)",
+            "color": "white",
+            "padding": "12px 24px",
+            "border_radius": "var(--radius-lg)",
+            "box_shadow": "var(--shadow-base)"
+          },
+          "secondary": {
+            "selector": ".btn-secondary",
+            "background": "#F3F4F6",
+            "color": "#1F2937",
+            "border": "1px solid #E5E7EB",
+            "padding": "12px 24px",
+            "border_radius": "var(--radius-lg)"
+          }
+        },
+        "input": {
+          "selector": "input, textarea, select",
+          "base": {
+            "padding": "12px 16px",
+            "border": "1px solid #E5E7EB",
+            "border_radius": "var(--radius-md)",
+            "font_family": "var(--font-sans)",
+            "font_size": "var(--text-base)",
+            "transition": "border-color 0.3s ease, box-shadow 0.3s ease"
+          },
+          "focus": {
+            "selector": "input:focus, textarea:focus",
+            "border_color": "var(--color-primary)",
+            "box_shadow": "0 0 0 3px rgba(37, 99, 235, 0.1)",
+            "outline": "none"
+          }
+        },
+        "card": {
+          "selector": ".card",
+          "base": {
+            "background": "white",
+            "border": "1px solid #E5E7EB",
+            "border_radius": "var(--radius-xl)",
+            "padding": "var(--spacing-6)",
+            "box_shadow": "var(--shadow-base)",
+            "transition": "all 0.3s ease"
+          },
+          "hover": {
+            "selector": ".card:hover",
+            "box_shadow": "var(--shadow-lg)",
+            "transform": "translateY(-2px)"
+          }
+        }
+      },
+      "responsive_layout": {
+        "mobile": {
+          "media_query": "@media (max-width: 640px)",
+          "font_sizes": {
+            "h1": "24px",
+            "h2": "20px",
+            "body": "14px"
+          },
+          "spacing": {
+            "container_padding": "16px",
+            "section_margin": "16px"
+          }
+        },
+        "tablet": {
+          "media_query": "@media (min-width: 640px) and (max-width: 1024px)",
+          "font_sizes": {
+            "h1": "30px",
+            "h2": "24px",
+            "body": "16px"
+          }
+        },
+        "desktop": {
+          "media_query": "@media (min-width: 1024px)",
+          "font_sizes": {
+            "h1": "36px",
+            "h2": "30px",
+            "body": "16px"
+          }
+        }
+      }
+    }
+  }
+}

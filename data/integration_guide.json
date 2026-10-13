@@ -1,0 +1,527 @@
+{
+  "integration_guide": {
+    "title": "Figma Design System → Prompt Engineering Integration",
+    "version": "2.0.0",
+    "overview": "Komplette Architektur für Figma-basiertes Prompt-Design mit direktem Mapping zu Prompting-Strategien",
+
+    "architecture_overview": {
+      "layers": [
+        {
+          "layer": "1. Figma Design Layer",
+          "responsibility": "Visual Design & Structure",
+          "components": [
+            "Figma Frames (PROMPT/*)",
+            "Layer Naming Contract",
+            "Color System Variables",
+            "Typography Hierarchy",
+            "Component Library"
+          ],
+          "outputs": ["Figma JSON Export via Plugin"]
+        },
+        {
+          "layer": "2. Extraction & Validation Layer",
+          "responsibility": "Parse & Validate",
+          "components": [
+            "Figma Plugin (export to JSON)",
+            "Schema Validator",
+            "Layer Contract Checker",
+            "Content Quality Scanner"
+          ],
+          "outputs": ["Valid Prompt JSON", "Validation Report"]
+        },
+        {
+          "layer": "3. Prompt Engineering Layer",
+          "responsibility": "Strategy Assignment & Optimization",
+          "components": [
+            "Strategy Mapper (design → prompt strategy)",
+            "Prompt Template Renderer",
+            "Variable Resolver",
+            "Context Injector"
+          ],
+          "outputs": ["Executable Prompt Spec"]
+        },
+        {
+          "layer": "4. Execution & Evaluation Layer",
+          "responsibility": "Run & Assess",
+          "components": [
+            "Model Integration (OpenAI, Hermes, etc)",
+            "Evaluation Runner",
+            "Metrics Calculator",
+            "Results Aggregator"
+          ],
+          "outputs": ["Evaluation Results", "Quality Metrics"]
+        },
+        {
+          "layer": "5. Feedback & Versioning Layer",
+          "responsibility": "Store & Iterate",
+          "components": [
+            "Version Control (Git)",
+            "Result Storage (DB)",
+            "Analytics Dashboard",
+            "A/B Testing Framework"
+          ],
+          "outputs": ["Updated Prompts", "Performance Trends"]
+        }
+      ]
+    },
+
+    "data_flow_example": {
+      "scenario": "Designer creates CoT prompt in Figma → Engineer evaluates → Results inform next iteration",
+      "steps": [
+        {
+          "step": 1,
+          "actor": "Design Lead",
+          "action": "Create PROMPT/analysis-v2 frame in Figma",
+          "figma_structure": {
+            "METADATA": {
+              "title": "Analysis CoT v2",
+              "strategy": "chain-of-thought",
+              "category": "analysis"
+            },
+            "CONTENT": {
+              "system": "Du bist ein analytischer Denker...",
+              "user_template": "Analysiere folgendes Problem in 5 Schritten: {{problem}}",
+              "guardrails": ["Sei objektiv", "Nutze Daten nicht Annahmen"]
+            },
+            "EXAMPLES": {
+              "example_1": {
+                "input": "Warum sinken die Nutzerzahlen?",
+                "output": "1. Daten sammeln... 2. Trends analysieren... etc"
+              }
+            }
+          },
+          "output": "Figma frame ready"
+        },
+        {
+          "step": 2,
+          "actor": "Engineer",
+          "action": "Export from Figma via Plugin",
+          "tool": "figma_prompt_exporter",
+          "output": {
+            "format": "JSON",
+            "includes": ["metadata", "system_prompt", "user_template", "guardrails", "examples"],
+            "valid_against": "hermes_prompt_schema.json"
+          }
+        },
+        {
+          "step": 3,
+          "actor": "System",
+          "action": "Parse & Validate",
+          "validations": [
+            "Schema matches hermes_prompt_schema",
+            "Layer contract satisfied",
+            "Required fields not empty",
+            "Token count within limits",
+            "Content quality > 0.75"
+          ],
+          "output": "validation_report",
+          "on_success": "proceed_to_evaluation",
+          "on_failure": "show_errors_to_engineer"
+        },
+        {
+          "step": 4,
+          "actor": "Engineer",
+          "action": "Configure evaluation",
+          "selects": {
+            "test_cases": "analysis_cases_1-5",
+            "models": ["gpt-4", "hermes-3"],
+            "parallel_runs": 3,
+            "temperature": 0.7
+          },
+          "output": "evaluation_config.json"
+        },
+        {
+          "step": 5,
+          "actor": "System",
+          "action": "Run evaluation",
+          "process": [
+            "Load prompt from database",
+            "For each test case:",
+            "  - Send to each model with specified params",
+            "  - Collect response",
+            "  - Score on quality dimensions",
+            "Aggregate results",
+            "Calculate statistics"
+          ],
+          "output": "evaluation_results.json",
+          "metrics": {
+            "per_model": {
+              "gpt_4": {
+                "avg_score": 8.5,
+                "coherence": 0.92,
+                "completeness": 0.90,
+                "accuracy": 0.88,
+                "clarity": 0.85
+              },
+              "hermes_3": {
+                "avg_score": 8.1,
+                "coherence": 0.89,
+                "completeness": 0.87,
+                "accuracy": 0.82,
+                "clarity": 0.83
+              }
+            },
+            "per_case": [
+              {
+                "case_id": "analysis_001",
+                "results": [
+                  {"model": "gpt-4", "score": 8.6, "latency_ms": 2341},
+                  {"model": "hermes-3", "score": 8.3, "latency_ms": 945}
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "step": 6,
+          "actor": "Engineer",
+          "action": "Review results",
+          "dashboard_shows": [
+            "Summary metrics",
+            "Per-model comparison",
+            "Per-case breakdown",
+            "Side-by-side output comparison",
+            "Trend vs previous version"
+          ],
+          "insight": "gpt-4 higher quality but slower, hermes-3 good balance",
+          "decision": "Iterate prompt based on lowest-scoring dimension (clarity)"
+        },
+        {
+          "step": 7,
+          "actor": "Design Lead",
+          "action": "Update Figma frame based on findings",
+          "modification": "Simplify user template, add clarifying examples",
+          "new_frame": "PROMPT/analysis-v3",
+          "output": "Updated Figma frame"
+        },
+        {
+          "step": 8,
+          "actor": "System",
+          "action": "Run new evaluation",
+          "compares_with": "v2",
+          "shows": "improvement_report",
+          "result": "clarity improved from 0.85 → 0.91, overall score 8.5 → 8.7"
+        }
+      ]
+    },
+
+    "prompt_strategy_selection_logic": {
+      "description": "Wie wird die richtige Prompting-Strategie basierend auf Design-Elementen gewählt?",
+      "decision_tree": {
+        "root": "Analyze User Interface Element",
+        "branches": [
+          {
+            "condition": "Button (Primary, CTA)",
+            "type": "user_initiates_action",
+            "strategy": "chain_of_thought",
+            "reasoning": "User is taking decisive action; provide clear, structured path forward",
+            "prompt_context": {
+              "system": "Assistant solving structured problems step-by-step",
+              "instruction": "Break this down into clear, numbered steps",
+              "output": "Numbered steps with reasoning between each"
+            }
+          },
+          {
+            "condition": "Input Field (focus)",
+            "type": "user_entering_data",
+            "strategy": "few_shot_learning",
+            "reasoning": "User needs context of what this field accepts; show examples",
+            "prompt_context": {
+              "system": "Pattern-recognition expert",
+              "instruction": "Here are examples of valid inputs",
+              "output": "Pattern applied to user context"
+            }
+          },
+          {
+            "condition": "Card (hovering, exploring)",
+            "type": "user_exploring_options",
+            "strategy": "few_shot_learning",
+            "reasoning": "User browsing options; show similar examples for comparison",
+            "prompt_context": {
+              "system": "Helpful guide showing options",
+              "instruction": "Show examples of similar items",
+              "output": "Pattern examples that help decision"
+            }
+          },
+          {
+            "condition": "Modal Dialog (decision point)",
+            "type": "user_making_decision",
+            "strategy": "tree_of_thought",
+            "reasoning": "Critical decision; explore multiple approaches fairly",
+            "prompt_context": {
+              "system": "Strategic advisor exploring options",
+              "instruction": "Consider multiple approaches",
+              "output": "Comparison of approaches with recommendation"
+            }
+          },
+          {
+            "condition": "Loading State (processing)",
+            "type": "system_validating",
+            "strategy": "meta_reasoning",
+            "reasoning": "Internal validation occurring; self-check for quality",
+            "prompt_context": {
+              "system": "Self-validating AI",
+              "internal_check": [
+                "Is this complete?",
+                "Is this accurate?",
+                "Is this clear?"
+              ],
+              "output": "Validated result or error with help"
+            }
+          },
+          {
+            "condition": "Error Message (recovery)",
+            "type": "user_needs_help",
+            "strategy": "role_play_persona",
+            "role": "helpful_expert",
+            "reasoning": "User made mistake; guide as patient expert with solutions",
+            "prompt_context": {
+              "system": "Expert advisor in error recovery",
+              "instruction": "Explain problem, why it matters, how to fix",
+              "output": "Clear error guidance + actionable fix"
+            }
+          },
+          {
+            "condition": "Multi-step Form (progress)",
+            "type": "sequential_process",
+            "strategy": "chain_of_thought",
+            "reasoning": "Each step depends on previous; show clear progression",
+            "prompt_context": {
+              "system": "Guide through sequential process",
+              "instruction": "Show step-by-step progression",
+              "output": "Clear next step + context"
+            }
+          },
+          {
+            "condition": "Help/Info Icon (assistance)",
+            "type": "user_seeking_expertise",
+            "strategy": "role_play_persona",
+            "role": "domain_expert",
+            "reasoning": "User wants expert perspective; advise from expertise",
+            "prompt_context": {
+              "system": "Expert in relevant domain",
+              "instruction": "Advise based on expertise",
+              "output": "Expert-level guidance"
+            }
+          }
+        ]
+      }
+    },
+
+    "integration_points": {
+      "figma_plugin": {
+        "name": "Hermes Prompt Exporter",
+        "functions": [
+          {
+            "function": "detect_prompt_frames",
+            "description": "Find all PROMPT/* frames in page",
+            "returns": "list of frame metadata"
+          },
+          {
+            "function": "export_to_json",
+            "description": "Export frame structure to JSON",
+            "parameters": ["frame_id", "include_examples"],
+            "returns": "json_string"
+          },
+          {
+            "function": "validate_contract",
+            "description": "Check if frame matches layer contract",
+            "parameters": ["frame_id"],
+            "returns": "validation_result"
+          },
+          {
+            "function": "preview_rendered_prompt",
+            "description": "Show how prompt will look after rendering",
+            "parameters": ["frame_id", "test_variables"],
+            "returns": "rendered_prompt_preview"
+          },
+          {
+            "function": "push_to_git",
+            "description": "Create git commit with exported prompts",
+            "parameters": ["frame_id", "message"],
+            "returns": "git_commit_hash"
+          }
+        ]
+      },
+      "github_automation": {
+        "workflows": [
+          {
+            "name": "validate_prompt_pr",
+            "trigger": "pull_request",
+            "conditions": ["files modified in prompts/"],
+            "steps": [
+              "Extract prompt JSON",
+              "Validate schema",
+              "Check layer contract",
+              "Run quality checks",
+              "Estimate token count",
+              "Comment results on PR"
+            ]
+          },
+          {
+            "name": "sync_figma_to_repo",
+            "trigger": "schedule (daily)",
+            "steps": [
+              "Export all PROMPT/* frames from Figma",
+              "Check for changes vs repository",
+              "Create pull request if changes",
+              "Tag with [Figma Sync]"
+            ]
+          },
+          {
+            "name": "run_evaluations",
+            "trigger": "push to prompts/",
+            "steps": [
+              "Detect new/modified prompts",
+              "Run evaluations on test cases",
+              "Generate results comment",
+              "Update evaluation history"
+            ]
+          }
+        ]
+      },
+      "mcp_server": {
+        "purpose": "Expose prompt operations to MCP-compatible clients",
+        "available_tools": [
+          {
+            "tool": "list_prompts",
+            "input": {"filter": "strategy|category|tag"},
+            "output": ["prompt_id", "name", "strategy", "version", "quality_score"]
+          },
+          {
+            "tool": "get_prompt",
+            "input": {"prompt_id": "string", "version": "string|latest"},
+            "output": "full_prompt_spec"
+          },
+          {
+            "tool": "create_prompt",
+            "input": "prompt_spec_json",
+            "output": "created_prompt_id"
+          },
+          {
+            "tool": "evaluate_prompt",
+            "input": {
+              "prompt_id": "string",
+              "test_cases": "list[string]",
+              "models": "list[string]",
+              "parallel_runs": "integer"
+            },
+            "output": "evaluation_results"
+          },
+          {
+            "tool": "render_prompt",
+            "input": {
+              "prompt_id": "string",
+              "variables": "object"
+            },
+            "output": "rendered_prompt_text"
+          }
+        ]
+      }
+    },
+
+    "css_to_prompt_mapping_examples": {
+      "examples": [
+        {
+          "css_selector": ".btn-primary:hover",
+          "css_rule": "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);",
+          "design_meaning": "Button is elevated, user attention increased",
+          "prompt_signal": "Action is viable and attractive; user is considering it",
+          "prompt_strategy": "Use persuasive language while maintaining clarity",
+          "instruction": "The user is hovering over a primary action. Your response should highlight the benefits while maintaining logical structure."
+        },
+        {
+          "css_selector": "input:focus",
+          "css_rule": "border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);",
+          "design_meaning": "User is focused on this field, high attention",
+          "prompt_signal": "User is concentrating on specific input",
+          "prompt_strategy": "Be precise, concise, and contextual",
+          "instruction": "The user is focused on entering data into a specific field. Provide brief, relevant guidance without overwhelming options."
+        },
+        {
+          "css_selector": "input:error",
+          "css_rule": "border-color: #EF4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);",
+          "design_meaning": "Error state, user attention critical",
+          "prompt_signal": "User made a mistake and needs help",
+          "prompt_strategy": "Role-play as patient expert; explain clearly how to fix",
+          "instruction": "The user encountered an error. Explain what went wrong in user-friendly terms, why it matters, and provide a clear path to recovery."
+        },
+        {
+          "css_selector": ".loading",
+          "css_rule": "@keyframes spin { ... } animation: spin 1s linear infinite;",
+          "design_meaning": "System is processing, uncertain duration",
+          "prompt_signal": "System is thinking/validating",
+          "prompt_strategy": "Meta-reasoning: internally validate the quality of work so far",
+          "instruction": "While the system processes, internally check: Is my previous reasoning sound? Are there edge cases I've missed? Am I ready for the next phase?"
+        },
+        {
+          "css_selector": ".card:hover",
+          "css_rule": "transform: translateY(-2px); box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);",
+          "design_meaning": "Card is interactive and hoverable, user exploring",
+          "prompt_signal": "User is exploring options/alternatives",
+          "prompt_strategy": "Few-shot learning: show similar examples",
+          "instruction": "The user is exploring options. Show them 2-3 related examples that demonstrate patterns they might apply."
+        }
+      ]
+    },
+
+    "validation_checklist": {
+      "before_evaluation": [
+        {
+          "item": "Schema Validation",
+          "check": "Prompt JSON matches hermes_prompt_schema.json",
+          "fail_action": "block_evaluation"
+        },
+        {
+          "item": "Required Fields",
+          "check": "system, user_template, strategy all present and not empty",
+          "fail_action": "block_evaluation"
+        },
+        {
+          "item": "Layer Contract",
+          "check": "If from Figma: METADATA, CONTENT, EXAMPLES present",
+          "fail_action": "warn_incomplete"
+        },
+        {
+          "item": "Content Quality",
+          "check": "Clarity, specificity, conciseness scored > 0.70",
+          "fail_action": "warn_low_quality"
+        },
+        {
+          "item": "Token Count",
+          "check": "system + user_template < 4000 tokens",
+          "fail_action": "warn_size"
+        },
+        {
+          "item": "Examples",
+          "check": "If few-shot strategy: examples present and relevant",
+          "fail_action": "warn_incomplete"
+        },
+        {
+          "item": "Variables",
+          "check": "All {{variables}} in template have definitions",
+          "fail_action": "warn_undefined_vars"
+        }
+      ]
+    },
+
+    "quality_thresholds": {
+      "automatic_approval": {
+        "overall_score": ">= 8.0",
+        "any_dimension": ">= 7.5",
+        "consistency": ">= 0.80",
+        "action": "Auto-merge to main if CI passes"
+      },
+      "manual_review": {
+        "overall_score": "6.5 - 7.9",
+        "requires": "Code review approval",
+        "action": "Requires human review before merge"
+      },
+      "needs_improvement": {
+        "overall_score": "< 6.5",
+        "any_dimension": "< 6.0",
+        "action": "Reject with detailed feedback for revision"
+      }
+    }
+  }
+}

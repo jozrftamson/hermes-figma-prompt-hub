@@ -1,0 +1,37 @@
+{
+  "name": "hermes-figma-prompt-hub-nuxt",
+  "version": "1.0.0",
+  "description": "Hermes Figma Prompt Hub - Complete Design System & Prompt Management Platform",
+  "private": false,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "preview": "nuxt preview",
+    "generate": "nuxt generate",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "figma:import": "python3 scripts/figma_importer.py",
+    "figma:sync": "bash scripts/figma_sync.sh import",
+    "figma:webhook": "python3 scripts/figma_webhook.py",
+    "validate:prompts": "python3 scripts/validate_all.py prompts/",
+    "css:generate": "python3 scripts/css_generator.py data/figma_design_system_extended.json css/",
+    "scss:generate": "python3 scripts/scss_generator.py data/figma_design_system_extended.json scss/",
+    "styles:build": "bash scripts/generate_styles.sh build"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxtjs/eslint-config": "latest",
+    "@nuxtjs/tailwindcss": "latest",
+    "eslint": "latest",
+    "nuxt": "latest",
+    "typescript": "latest",
+    "vue": "latest"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "date-fns": "^2.30.0",
+    "pinia": "^2.1.0",
+    "zod": "^3.22.0"
+  }
+}
