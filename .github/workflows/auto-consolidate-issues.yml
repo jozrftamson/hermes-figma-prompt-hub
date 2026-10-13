@@ -1,0 +1,206 @@
+name: Auto-Consolidate Resolved Issues into PR
+
+on:
+  issues:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      batch_size:
+        description: 'Number of issues to batch into one PR (default: 5)'
+        required: false
+        default: '5'
+
+jobs:
+  batch-resolved-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find all recently closed issues
+        id: find_issues
+        run: |
+          # Get recently closed issues (last 24 hours)
+          BATCH_SIZE="${{ github.event.inputs.batch_size }}"
+          BATCH_SIZE=${BATCH_SIZE:-5}
+          
+          # If triggered by issue close, get that specific issue
+          if [ "${{ github.event_name }}" == "issues" ]; then
+            ISSUE_NUMBERS="${{ github.event.issue.number }}"
+            ISSUE_COUNT=1
+          else
+            # Get recently closed issues
+            ISSUE_NUMBERS=$(gh issue list \
+              --state closed \
+              --limit $BATCH_SIZE \
+              --search "closed:>=2024-01-01" \
+              --json number \
+              --jq '.[] | .number' \
+              2>/dev/null | head -$BATCH_SIZE | tr '\n' ' ')
+            ISSUE_COUNT=$(echo "$ISSUE_NUMBERS" | wc -w)
+          fi
+          
+          echo "issue_numbers=$ISSUE_NUMBERS" >> $GITHUB_OUTPUT
+          echo "issue_count=$ISSUE_COUNT" >> $GITHUB_OUTPUT
+          echo "Found $ISSUE_COUNT closed issues: $ISSUE_NUMBERS"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Collect commits for all issues
+        id: collect_commits
+        run: |
+          ISSUE_NUMBERS="${{ steps.find_issues.outputs.issue_numbers }}"
+          ALL_COMMITS=""
+          TOTAL_COMMITS=0
+          ISSUE_LIST=""
+          
+          for ISSUE_NUM in $ISSUE_NUMBERS; do
+            # Get commits that reference this issue
+            COMMITS=$(git log --all --grep="#$ISSUE_NUM" --oneline)
+            
+            if [ -n "$COMMITS" ]; then
+              COMMIT_COUNT=$(echo "$COMMITS" | wc -l)
+              TOTAL_COMMITS=$((TOTAL_COMMITS + COMMIT_COUNT))
+              
+              # Get issue title
+              ISSUE_TITLE=$(gh issue view $ISSUE_NUM --json title --jq '.title' 2>/dev/null || echo "Issue #$ISSUE_NUM")
+              
+              ALL_COMMITS="$ALL_COMMITS
+
+#### Issue #$ISSUE_NUM: $ISSUE_TITLE
+\`\`\`
+$COMMITS
+\`\`\`"
+              
+              ISSUE_LIST="$ISSUE_LIST #$ISSUE_NUM,"
+            fi
+          done
+          
+          # Remove trailing comma from issue list
+          ISSUE_LIST=$(echo "$ISSUE_LIST" | sed 's/,$//')
+          
+          echo "all_commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$ALL_COMMITS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "total_commits=$TOTAL_COMMITS" >> $GITHUB_OUTPUT
+          echo "issue_list=$ISSUE_LIST" >> $GITHUB_OUTPUT
+          
+          echo "Total commits found: $TOTAL_COMMITS for issues: $ISSUE_LIST"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create consolidated PR
+        id: create_consolidated_pr
+        run: |
+          ISSUE_COUNT="${{ steps.find_issues.outputs.issue_count }}"
+          TOTAL_COMMITS="${{ steps.collect_commits.outputs.total_commits }}"
+          ISSUE_LIST="${{ steps.collect_commits.outputs.issue_list }}"
+          ALL_COMMITS="${{ steps.collect_commits.outputs.all_commits }}"
+          
+          if [ "$TOTAL_COMMITS" -eq "0" ]; then
+            echo "No commits found, skipping PR creation"
+            exit 0
+          fi
+          
+          # Create feature branch from resolved issues
+          BRANCH_NAME="feature/resolve-issues-batch-$(date +%Y%m%d-%H%M%S)"
+          
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          
+          # Check if branch exists
+          if ! git rev-parse --verify "origin/$BRANCH_NAME" >/dev/null 2>&1; then
+            git checkout -b "$BRANCH_NAME" main
+            git push -u origin "$BRANCH_NAME"
+          fi
+          
+          # Generate comprehensive PR body
+          PR_BODY="## 🚀 Consolidated PR: Resolved Issues
+
+Closes $ISSUE_LIST
+
+### Summary
+This PR consolidates the resolution of **$ISSUE_COUNT** GitHub issues with a total of **$TOTAL_COMMITS** commits.
+
+### Issues Resolved
+$ISSUE_LIST
+
+### Commits Included
+$ALL_COMMITS
+
+### Statistics
+- **Issues Closed:** $ISSUE_COUNT
+- **Total Commits:** $TOTAL_COMMITS
+- **Created By:** Auto-Consolidate Action
+- **Status:** Ready for Review
+
+### Next Steps
+1. ✅ Review all changes
+2. ✅ Run test suite if needed
+3. ✅ Merge to main branch
+4. ✅ All issues will be automatically closed
+
+---
+
+*This PR was automatically created by the 'Auto-Consolidate Resolved Issues' GitHub Action.*
+*It combines multiple resolved issues into a single PR for easier tracking and management.*"
+          
+          # Create PR
+          PR_OUTPUT=$(gh pr create \
+            --title "feat: Resolve Issues - Batch #$ISSUE_COUNT ($ISSUE_LIST)" \
+            --body "$PR_BODY" \
+            --base main \
+            --head "$BRANCH_NAME" \
+            2>&1 || echo "")
+          
+          if echo "$PR_OUTPUT" | grep -q "pull"; then
+            PR_URL=$(echo "$PR_OUTPUT" | grep "pull" | head -1)
+            PR_NUMBER=$(echo "$PR_URL" | grep -oP 'pull/\K[0-9]+' || echo "")
+            
+            echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            
+            echo "✅ PR created successfully: $PR_URL"
+          else
+            echo "⚠️  Could not create PR: $PR_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Label issues and link to PR
+        if: steps.create_consolidated_pr.outputs.pr_number != ''
+        run: |
+          ISSUE_NUMBERS="${{ steps.find_issues.outputs.issue_numbers }}"
+          PR_NUMBER="${{ steps.create_consolidated_pr.outputs.pr_number }}"
+          
+          for ISSUE_NUM in $ISSUE_NUMBERS; do
+            # Add label
+            gh issue edit $ISSUE_NUM --add-label "in-pr" 2>/dev/null || true
+            
+            # Add comment with PR link
+            COMMENT="🔗 This issue has been included in PR #$PR_NUMBER for consolidation and review."
+            gh issue comment $ISSUE_NUM --body "$COMMENT" 2>/dev/null || true
+          done
+          
+          echo "Updated all issues with PR link"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send notification
+        if: always()
+        run: |
+          echo "## ✅ Action Complete"
+          echo ""
+          echo "**Issues Processed:** ${{ steps.find_issues.outputs.issue_count }}"
+          echo "**Total Commits:** ${{ steps.collect_commits.outputs.total_commits }}"
+          echo "**PR Number:** ${{ steps.create_consolidated_pr.outputs.pr_number }}"
+          echo "**Branch:** ${{ steps.create_consolidated_pr.outputs.branch_name }}"
+          echo ""
+          echo "PR URL: ${{ steps.create_consolidated_pr.outputs.pr_url }}"
