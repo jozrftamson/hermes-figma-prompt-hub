@@ -1,0 +1,240 @@
+name: Auto-Create PR for Resolved Issues
+
+on:
+  issues:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to create PR for (optional)'
+        required: false
+
+jobs:
+  create-pr-for-resolved-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get issue information
+        id: issue
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            ISSUE_NUMBER="${{ github.event.inputs.issue_number }}"
+            if [ -z "$ISSUE_NUMBER" ]; then
+              echo "Manual trigger without issue number - getting latest closed issue"
+              ISSUE_NUMBER=$(gh issue list --state closed --limit 1 --json number --jq '.[0].number' 2>/dev/null || echo "")
+            fi
+          else
+            ISSUE_NUMBER="${{ github.event.issue.number }}"
+          fi
+          
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          
+          if [ -n "$ISSUE_NUMBER" ]; then
+            echo "Processing issue #$ISSUE_NUMBER"
+            
+            # Get issue details
+            ISSUE_DATA=$(gh issue view $ISSUE_NUMBER --json number,title,body,labels,state,author)
+            echo "issue_data=$ISSUE_DATA" >> $GITHUB_OUTPUT
+            
+            # Extract issue title
+            ISSUE_TITLE=$(echo "$ISSUE_DATA" | jq -r '.title')
+            echo "issue_title=$ISSUE_TITLE" >> $GITHUB_OUTPUT
+            
+            # Extract labels
+            LABELS=$(echo "$ISSUE_DATA" | jq -r '.labels[].name' | tr '\n' ',')
+            echo "issue_labels=$LABELS" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if PR already exists for this issue
+        id: check_pr
+        run: |
+          ISSUE_NUMBER="${{ steps.issue.outputs.issue_number }}"
+          
+          if [ -z "$ISSUE_NUMBER" ]; then
+            echo "No issue number found, skipping PR creation"
+            exit 0
+          fi
+          
+          # Search for existing PR that closes this issue
+          PR_EXISTS=$(gh pr list \
+            --search "closes #$ISSUE_NUMBER" \
+            --json number \
+            --jq 'length' \
+            2>/dev/null || echo "0")
+          
+          echo "pr_exists=$PR_EXISTS" >> $GITHUB_OUTPUT
+          echo "Issue #$ISSUE_NUMBER: Found $PR_EXISTS existing PRs"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Identify commits related to issue
+        id: commits
+        run: |
+          ISSUE_NUMBER="${{ steps.issue.outputs.issue_number }}"
+          
+          if [ -z "$ISSUE_NUMBER" ]; then
+            exit 0
+          fi
+          
+          # Find commits that mention the issue
+          COMMITS=$(git log --all --grep="#$ISSUE_NUMBER" --oneline | head -20)
+          COMMIT_COUNT=$(echo "$COMMITS" | wc -l)
+          
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMITS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
+          echo "Found $COMMIT_COUNT commits for issue #$ISSUE_NUMBER"
+
+      - name: Identify feature branch
+        id: branch
+        run: |
+          ISSUE_NUMBER="${{ steps.issue.outputs.issue_number }}"
+          
+          if [ -z "$ISSUE_NUMBER" ]; then
+            exit 0
+          fi
+          
+          # Look for feature branches that might be related
+          BRANCHES=$(git branch -r | grep -E "(feature|fix|issue|#$ISSUE_NUMBER)" | head -5)
+          
+          echo "branches<<EOF" >> $GITHUB_OUTPUT
+          echo "$BRANCHES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        id: create_pr
+        run: |
+          ISSUE_NUMBER="${{ steps.issue.outputs.issue_number }}"
+          ISSUE_TITLE="${{ steps.issue.outputs.issue_title }}"
+          COMMIT_COUNT="${{ steps.commits.outputs.commit_count }}"
+          PR_EXISTS="${{ steps.check_pr.outputs.pr_exists }}"
+          
+          if [ -z "$ISSUE_NUMBER" ]; then
+            echo "No issue number, skipping PR creation"
+            exit 0
+          fi
+          
+          if [ "$PR_EXISTS" != "0" ]; then
+            echo "PR already exists for this issue, skipping"
+            exit 0
+          fi
+          
+          if [ "$COMMIT_COUNT" -eq "0" ]; then
+            echo "No commits found for issue #$ISSUE_NUMBER, skipping PR creation"
+            exit 0
+          fi
+          
+          # Create feature branch name from issue number and title
+          BRANCH_NAME="feature/issue-$ISSUE_NUMBER-$(echo "$ISSUE_TITLE" | tr ' ' '-' | tr -cd 'a-zA-Z0-9-' | cut -c1-40)"
+          BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]')
+          
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          
+          # Check if branch exists, if not create it from main
+          if ! git rev-parse --verify "origin/$BRANCH_NAME" >/dev/null 2>&1; then
+            echo "Creating branch $BRANCH_NAME from main"
+            git checkout -b "$BRANCH_NAME" main
+            git push -u origin "$BRANCH_NAME"
+          fi
+          
+          # Generate PR body
+          PR_BODY="## Automated PR for Issue #$ISSUE_NUMBER
+
+Closes #$ISSUE_NUMBER
+
+### Issue Details
+**Title:** $ISSUE_TITLE
+
+### Commits in this PR
+\`\`\`
+${{ steps.commits.outputs.commits }}
+\`\`\`
+
+### Statistics
+- **Commits:** $COMMIT_COUNT
+- **Issue:** #$ISSUE_NUMBER
+- **Status:** Automatically created from resolved issue
+
+---
+
+This PR was automatically generated by the 'Auto-Create PR for Resolved Issues' GitHub Action.
+
+It contains all commits that reference or relate to issue #$ISSUE_NUMBER.
+
+**Next Steps:**
+1. Review the changes
+2. Run tests if needed
+3. Merge to main branch when ready
+"
+          
+          # Create PR
+          PR_URL=$(gh pr create \
+            --title "Resolve Issue #$ISSUE_NUMBER: $ISSUE_TITLE" \
+            --body "$PR_BODY" \
+            --base main \
+            --head "$BRANCH_NAME" \
+            --draft \
+            2>&1 || echo "")
+          
+          if [ -z "$PR_URL" ]; then
+            echo "Failed to create PR or PR might already exist"
+            exit 0
+          fi
+          
+          # Extract PR number from URL
+          PR_NUMBER=$(echo "$PR_URL" | grep -oP 'pull/\K[0-9]+' || echo "")
+          
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          
+          if [ -n "$PR_NUMBER" ]; then
+            echo "✅ PR #$PR_NUMBER created successfully!"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment on issue with PR link
+        if: steps.create_pr.outputs.pr_number != ''
+        run: |
+          ISSUE_NUMBER="${{ steps.issue.outputs.issue_number }}"
+          PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
+          
+          COMMENT="## 🚀 Pull Request Automatically Created
+
+This issue has been resolved and a pull request has been automatically created:
+
+- **PR:** #$PR_NUMBER
+- **Status:** Draft (ready for review)
+- **Commits:** ${{ steps.commits.outputs.commit_count }}
+
+Visit PR #$PR_NUMBER to review and merge the changes.
+
+---
+
+*This comment was automatically generated by the 'Auto-Create PR for Resolved Issues' GitHub Action.*"
+          
+          gh issue comment $ISSUE_NUMBER --body "$COMMENT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print Summary
+        run: |
+          echo "## Action Summary"
+          echo "- Issue Number: ${{ steps.issue.outputs.issue_number }}"
+          echo "- Issue Title: ${{ steps.issue.outputs.issue_title }}"
+          echo "- Commits Found: ${{ steps.commits.outputs.commit_count }}"
+          echo "- PR Created: ${{ steps.create_pr.outputs.pr_number }}"
+          echo "- PR URL: ${{ steps.create_pr.outputs.pr_url }}"

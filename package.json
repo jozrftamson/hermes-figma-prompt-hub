@@ -11,6 +11,7 @@
     "generate": "nuxt generate",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
+    "test": "echo 'No tests configured yet'",
     "figma:import": "python3 scripts/figma_importer.py",
     "figma:sync": "bash scripts/figma_sync.sh import",
     "figma:webhook": "python3 scripts/figma_webhook.py",
