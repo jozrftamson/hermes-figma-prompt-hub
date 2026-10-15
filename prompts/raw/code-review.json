@@ -1,4 +1,7 @@
 {
+  "id": "code-review-001",
+  "title": "Code Review Prompt",
+  "content": "A structured prompt for conducting thorough code reviews with systematic analysis",
   "prompt_id": "code-review-001",
   "name": "Code Review Prompt",
   "description": "A structured prompt for conducting thorough code reviews with systematic analysis",
@@ -36,3 +39,4 @@
     "tags": ["code-review", "analysis", "feedback", "code-quality"]
   }
 }
+
