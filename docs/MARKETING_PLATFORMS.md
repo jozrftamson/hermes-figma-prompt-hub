@@ -27,9 +27,10 @@ Hermes Figma Prompt Hub now supports [description].
 
 **Account Setup**:
 ```
-Handle: [YOUR_HANDLE]
-URL: https://twitter.com/[YOUR_HANDLE]
+Handle: @zaeri_yousef
+URL: https://x.com/zaeri_yousef
 Bio: Maintaining Hermes Figma Prompt Hub - Open source Figma-to-MCP prompt management
+Profile: https://x.com/zaeri_yousef
 ```
 
 ### LinkedIn
@@ -319,13 +320,13 @@ This issue (#47) should be updated monthly to include:
 
 ### Your Platforms:
 ```
-Twitter: [URL or handle]
+Twitter/X: https://x.com/zaeri_yousef (@zaeri_yousef)
+Reddit: https://reddit.com/user/joseftmson
 LinkedIn: [URL or profile]
 Discord: [Server invite link]
 Newsletter: [Signup URL or platform]
 Website: [URL]
 Blog: [Platform/URL]
-Reddit: [Profile or communities]
 Dev.to: [Profile]
 Hashnode: [Profile]
 GitHub: https://github.com/jozrftamson/hermes-figma-prompt-hub
