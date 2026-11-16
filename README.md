@@ -78,47 +78,6 @@ hermes-figma-prompt-hub-nuxt/
 - Python 3.10+
 - Git
 
-### Installation
-
-```bash
-# Clone repository
-git clone https://github.com/jozrftamson/hermes-figma-prompt-hub-nuxt
-cd hermes-figma-prompt-hub-nuxt
-
-# Install dependencies
-npm install
-
-# Setup environment
-cp .env.example .env.local
-# Edit .env.local with your Figma credentials
-```
-
-### Environment Variables
-
-```bash
-# .env.local
-NUXT_FIGMA_API_TOKEN=figd_xxxx...
-NUXT_FIGMA_FILE_ID=ABC123DEF456
-NUXT_FIGMA_TEAM_ID=optional_team_id
-NUXT_FIGMA_WEBHOOK_SECRET=your_webhook_secret
-```
-
-### Running Locally
-
-```bash
-# Development server
-npm run dev
-# Visit http://localhost:3000
-
-# Import from Figma
-npm run figma:import
-
-# Validate prompts
-npm run validate:prompts
-
-# Generate CSS/SCSS
-npm run styles:build
-```
 
 ## 📚 Documentation
 
@@ -151,71 +110,6 @@ npm run styles:build
 ./scripts/figma_sync.sh sync            # Watch mode
 ```
 
-### CSS Generation
-```bash
-./scripts/generate_styles.sh css        # Generate CSS
-./scripts/generate_styles.sh scss       # Generate SCSS
-./scripts/generate_styles.sh build      # Build + minify
-./scripts/generate_styles.sh watch      # Watch mode
-```
-
-### Validation
-```bash
-python3 scripts/validate_all.py prompts/
-python3 scripts/schema_validator.py prompts/my-prompt.json
-python3 scripts/figma_layer_validator.py figma_export.json
-```
-
-## 🌐 Deployment
-
-### Vercel
-
-```bash
-vercel link
-vercel env add NUXT_FIGMA_API_TOKEN
-vercel deploy
-```
-
-### Docker
-
-```bash
-docker build -t hermes-prompt-hub .
-docker run -p 3000:3000 \
-  -e NUXT_FIGMA_API_TOKEN=... \
-  -e NUXT_FIGMA_FILE_ID=... \
-  hermes-prompt-hub
-```
-
-### GitHub Actions
-
-Auto-sync from Figma:
-
-```yaml
-name: Sync Prompts
-
-on:
-  schedule:
-    - cron: '0 * * * *'  # Hourly
-  workflow_dispatch:
-
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-      - run: pip install requests
-      - run: python3 scripts/figma_importer.py
-      - run: git add prompts/ && git commit -m "🤖 Sync from Figma" || exit 0
-      - run: git push
-```
-
-## 📊 Quality Metrics
-
-- **Code Coverage**: >85%
-- **Bundle Size**: ~200KB (gzipped)
-- **Performance**: Lighthouse >90
-- **Accessibility**: WCAG AA compliance
 
 ## 🤝 Contributing
 
@@ -230,82 +124,11 @@ MIT © 2025 Hermes Figma Prompt Hub
 - [Figma API Docs](https://www.figma.com/developers/api)
 - [Nuxt 3](https://nuxt.com)
 - [Pinia](https://pinia.vuejs.org)
-
----
-
 **Built with ❤️ for prompt engineers and design systems teams**
 
 ## 📋 Figma Layer Contract
 
 The importer expects Figma PROMPT frames with the following layer structure:
-
-```
-PROMPT/example-v1
-├── METADATA (group)
-│   ├── title (text)
-│   ├── description (text)
-│   ├── category (text)
-│   ├── strategy (text)
-│   └── version (text)
-├── CONTENT (group)
-│   ├── system (text)
-│   ├── user_template (text)
-│   ├── guardrails (text)
-│   └── output_format (text)
-├── EXAMPLES (group)
-│   └── example_N (frame)
-│       ├── input (text)
-│       ├── output (text)
-│       └── explanation (text)
-└── STRATEGY_CONFIG (group)
-    ├── num_steps (text)
-    └── step_structure (text)
-```
-
-### Test Fixtures
-
-Example test fixtures are available in `evals/cases/`:
-- `figma_prompt_example_v1.json` — Complete Figma PROMPT frame fixture
-
-Use these fixtures to test the importer without real Figma data:
-
-```bash
-python3 scripts/figma_importer.py --fixture evals/cases/figma_prompt_example_v1.json
-```
-
-## 🤖 MCP Server Integration
-
-Hermes includes a Model Context Protocol (MCP) server for integration with MCP clients like Claude Desktop, Cursor, and other AI assistants.
-
-### Available Tools
-
-- **list_prompts** — Enumerate all prompts in `prompts/raw/`
-- **validate_prompt** — Validate a specific prompt against schema
-- **get_prompt_stats** — Get collection statistics (strategies, categories, validity)
-
-### Quick Setup
-
-```bash
-# Copy config to Claude Desktop
-mkdir -p ~/.config/Claude/
-cp mcp/claude_desktop_config.json ~/.config/Claude/claude_desktop_config.json
-
-# Edit config with absolute path to your installation
-# Restart Claude Desktop
-```
-
-### Usage
-
-```bash
-# Test from CLI
-python3 mcp/server.py list
-python3 mcp/server.py validate --filename prompt-1.json
-python3 mcp/server.py stats
-
-# In Claude Desktop: "List my prompts" or "Validate prompt-1.json"
-```
-
-See [mcp/README.md](mcp/README.md) for detailed documentation.
 
 =======
 <p align="center">
