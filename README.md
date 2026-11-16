@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Hermes Figma Prompt Hub - Complete Platform
 
 > Design System & Prompt Management Platform with Figma Integration
