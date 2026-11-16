@@ -95,12 +95,12 @@ def _seed_file(client, root, name="out/hello.txt"):
 
 @pytest.mark.parametrize("endpoint", ["/api/files/upload", "/api/fs/write-text"])
 def test_atomic_write_failure_preserves_original(forced_files_client, monkeypatch, endpoint):
-    import utils
+    import utils.files
 
     client, root = forced_files_client
     target = _seed_file(client, root)
     previous = target.read_bytes()
-    original_replace = utils.os.replace
+    original_replace = utils.files.os.replace
 
     def fail_target_replace(source, destination):
         if str(destination) == str(target):
@@ -109,7 +109,7 @@ def test_atomic_write_failure_preserves_original(forced_files_client, monkeypatc
         return original_replace(source, destination)
 
     with monkeypatch.context() as patcher:
-        patcher.setattr(utils.os, "replace", fail_target_replace)
+        patcher.setattr(utils.files.os, "replace", fail_target_replace)
         payload = ({"path": str(target), "data_url": "data:text/plain;base64,bmV3"}
                    if endpoint.endswith("upload") else {"path": str(target), "content": "new"})
         response = client.post(endpoint, json=payload)
@@ -809,6 +809,44 @@ def test_sensitive_env_files_hidden_from_listing(forced_files_client):
 
 
 
+
+
+def test_home_credential_stores_hidden_and_unreadable(local_files_client):
+    """#95311/#98161: the default managed root is $HOME, so the OS/CLI credential
+    stores file_safety guards (~/.netrc, ~/.npmrc, ~/.ssh/, ~/.config/gh/, ...)
+    must be neither listed nor readable through the Files API."""
+    client, home = local_files_client
+    (home / "notes.txt").write_text("safe")
+    stores = [
+        ".netrc", ".pgpass", ".npmrc", ".pypirc", ".NPMRC",
+        ".ssh/id_custom", ".aws/config", ".gnupg/private-keys-v1.d/k.key",
+        ".kube/config", ".docker/config.json", ".azure/msal_token_cache.json",
+        ".config/gh/hosts.yml", ".config/gcloud/credentials.db", ".Config/GH/hosts.yml",
+    ]
+    for rel in stores:
+        path = home / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("secret")
+
+    names = [e["name"] for e in client.get("/api/files", params={"path": str(home)}).json()["entries"]]
+    assert "notes.txt" in names
+    for hidden in (".netrc", ".pgpass", ".npmrc", ".pypirc", ".NPMRC", ".ssh", ".aws", ".gnupg", ".kube", ".docker", ".azure"):
+        assert hidden not in names, hidden
+    config_names = [e["name"] for e in client.get("/api/files", params={"path": str(home / ".config")}).json()["entries"]]
+    assert "gh" not in config_names and "gcloud" not in config_names
+
+    for rel in stores:
+        resp = client.get("/api/files/read", params={"path": str(home / rel)})
+        assert resp.status_code == 403, (rel, resp.status_code)
+
+
+def test_credential_dir_sequence_needs_consecutive_components(local_files_client):
+    """``.config/gh`` is a two-component tree: an unrelated ``gh`` dir elsewhere stays browsable."""
+    client, home = local_files_client
+    (home / "projects" / "gh").mkdir(parents=True)
+    (home / "projects" / "gh" / "readme.md").write_text("ok")
+    resp = client.get("/api/files/read", params={"path": str(home / "projects" / "gh" / "readme.md")})
+    assert resp.status_code == 200
 
 
 def test_other_credential_store_basenames_blocked(forced_files_client):

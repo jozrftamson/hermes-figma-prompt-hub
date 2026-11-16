@@ -3648,6 +3648,7 @@ export interface SessionContextBreakdownResult {
   context_source: string
   model: string
   context_files?: ContextFileSource[]
+  prompt_cache?: PromptCacheWindow | null
 }
 export interface ContextCategory {
   color: string
@@ -3663,6 +3664,16 @@ export interface ContextFileSource {
   est_tokens: number
   loaded: boolean
   status: string
+}
+/** ``agent.prompt_cache_clock.cache_window``: until when the session's cached prompt prefix is warm. ``guaranteed_until``: the whole prefix is warm before it (a documented minimum or a proven tier); ``estimated_until``: certainly gone after it; between the two it may still be warm. ``coverage`` maps each cached tier to its deadline. ``confidence`` is ``proven`` | ``declared`` | ``assumed`` | ``unknown``; times are epoch seconds. */
+export interface PromptCacheWindow {
+  guaranteed_until: number | null
+  estimated_until: number | null
+  tier: string | null
+  confidence: string
+  reason: string
+  refreshed_at?: number | null
+  coverage?: Record<string, number>
 }
 export interface SessionCompressParams {
   session_id: string
@@ -4091,7 +4102,7 @@ export interface CronManageResult {
   removed_job?: CronRemovedJob | null
   [key: string]: unknown
 }
-/** ``tools/cronjob_job_args.py::_format_job``. */
+/** ``cron/job_args.py::_format_job``. */
 export interface CronJobRow {
   job_id: string
   name?: string
@@ -6251,7 +6262,7 @@ export interface PreviewOpenPayload {
   url: string
   label?: string
 }
-/** ``tools/preview_tool.py`` / ``tools/close_preview_tool.py``; ``url`` '' closes every tab. */
+/** ``tools/preview_tool.py``; ``url`` '' closes every tab. */
 export interface PreviewClosePayload {
   url?: string
 }
